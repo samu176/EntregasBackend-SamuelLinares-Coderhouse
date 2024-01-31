@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products</title>
+  <style>
+     .product-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+      width: 300px;
+      display: inline-block;
+    }
+    .product-card img {
+      max-width: 100%;
+      max-height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Productos</h1>
+  {{#each products}}
+    <div class="product-card">
+      <h3>{{#if this.title}}{{this.title}}{{else}}No Title{{/if}}</h3>
+      {{#if this.thumbnails}}
+        {{#each this.thumbnails}}
+          {{#if @first}}
+            <img src="{{this}}" alt="{{../this.title}} image">
+          {{/if}}
+        {{/each}}
+      {{/if}}
+      {{#if this.description}}
+        <p>{{this.description}}</p>
+      {{/if}}
+      {{#if this.price}}
+        <p>Price: ${{this.price}}</p>
+      {{/if}}
+      {{#if this.stock}}
+        <p>Stock: {{this.stock}}</p>
+      {{/if}}
+      <form action="/carts/product/{{this._id}}" method="post">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit">Add to Cart</button>
+      </form>
+    </div>
+  {{/each}}
+
+  <div>
+    {{#if hasNextPage}}
+      <a href="{{nextLink}}">Next Page</a>
+    {{/if}}
+    {{#if hasPrevPage}}
+      <a href="{{prevLink}}">Previous Page</a>
+    {{/if}}
+  </div>
+</body>
+</html>
