@@ -2,10 +2,11 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
-const connectToMongoDB = require('./db/mongoConnect');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const productManager = require('./dao/productManager');
 const messageManager = require('./dao/messageManager');
-
+const { connectToMongoDB, mongoURL } = require('./db/mongoConnect');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -31,14 +32,26 @@ app.use(express.json());
 // Conexión a MongoDB
 connectToMongoDB();
 
-// Rutas para productos y carritos
+// Configuración de connect-mongo
+app.use(session({
+  secret: 'your secret',
+  resave: false,
+  saveUninitialized: true,
+  store: MongoStore.create({ 
+    mongoUrl: mongoURL 
+  })
+}));
+
+// Rutas para productos, carritos y autenticación
 const productRoutes = require('./router/productRoutes');
 const cartRoutes = require('./router/cartRoutes');
 const messageRoutes = require('./router/messageRoutes');
+const authRoutes = require('./router/authRoutes');
 
 app.use('/home', productRoutes);
 app.use('/cart', cartRoutes);
 app.use('/messages', messageRoutes);
+app.use('/', authRoutes); // Nueva línea
 
 // Ruta para la vista de chat
 app.get('/chat', (req, res) => {

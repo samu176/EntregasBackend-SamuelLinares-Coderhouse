@@ -52,8 +52,8 @@ const getProducts = async (options) => {
       page: result.page,
       hasPrevPage: result.hasPrevPage,
       hasNextPage: result.hasNextPage,
-      prevLink: result.prevPage ? `/api/products?limit=${limit}&page=${result.prevPage}` : null,
-      nextLink: result.nextPage ? `/api/products?limit=${limit}&page=${result.nextPage}` : null,
+      prevLink: result.prevPage ? `/api/home?limit=${limit}&page=${result.prevPage}` : null,
+      nextLink: result.nextPage ? `/api/home?limit=${limit}&page=${result.nextPage}` : null,
     };
   } catch (error) {
     console.error('Error al obtener productos', error.message);
