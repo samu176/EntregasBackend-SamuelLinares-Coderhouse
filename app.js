@@ -7,6 +7,7 @@ const MongoStore = require('connect-mongo')(session);
 const productManager = require('./dao/productManager');
 const messageManager = require('./dao/messageManager');
 const { connectToMongoDB, mongoURL } = require('./db/mongoConnect');
+const ensureAuthenticated = require('./middleware/authMiddleware'); // Nueva línea
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -48,13 +49,13 @@ const cartRoutes = require('./router/cartRoutes');
 const messageRoutes = require('./router/messageRoutes');
 const authRoutes = require('./router/authRoutes');
 
-app.use('/home', productRoutes);
-app.use('/cart', cartRoutes);
+app.use('/home', ensureAuthenticated, productRoutes);
+app.use('/cart', ensureAuthenticated, cartRoutes); 
 app.use('/messages', messageRoutes);
-app.use('/', authRoutes); // Nueva línea
+app.use('/', authRoutes);
 
 // Ruta para la vista de chat
-app.get('/chat', (req, res) => {
+app.get('/chat', ensureAuthenticated, (req, res) => {
   res.render('chat');
 });
 
