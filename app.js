@@ -3,11 +3,11 @@ const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 const productManager = require('./dao/productManager');
 const messageManager = require('./dao/messageManager');
 const { connectToMongoDB, mongoURL } = require('./db/mongoConnect');
-const ensureAuthenticated = require('./middleware/authMiddleware'); // Nueva línea
+const ensureAuthenticated = require('./middleware/authMiddleware');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -35,7 +35,7 @@ connectToMongoDB();
 
 // Configuración de connect-mongo
 app.use(session({
-  secret: 'your secret',
+  secret: '1234567',
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({ 
