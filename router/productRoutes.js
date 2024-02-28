@@ -12,6 +12,7 @@ router.get('/', async (req, res) => {
     const { payload, totalPages, prevPage, nextPage, page: currentPage, hasPrevPage, hasNextPage, prevLink, nextLink } = result;
 
     res.render('home', { 
+      user: req.user, 
       products: payload, 
       totalPages, 
       prevPage, 

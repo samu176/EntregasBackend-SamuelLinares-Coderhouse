@@ -8,6 +8,7 @@ const productManager = require('./dao/productManager');
 const messageManager = require('./dao/messageManager');
 const { connectToMongoDB, mongoURL } = require('./db/mongoConnect');
 const ensureAuthenticated = require('./middleware/authMiddleware');
+const passport = require('./config/passport');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -15,10 +16,13 @@ const PORT = 8080;
 
 // Configuración de Handlebars
 const exphbs = require('express-handlebars');
+const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
+const Handlebars = require('handlebars');
 
 app.engine('handlebars', exphbs.engine({
-  layoutsDir: path.join(__dirname, 'views', 'layouts'),
   defaultLayout: 'main',
+  handlebars: allowInsecurePrototypeAccess(Handlebars),
+  layoutsDir: path.join(__dirname, 'views', 'layouts')
 }));
 
 app.set('view engine', 'handlebars');
@@ -35,13 +39,17 @@ connectToMongoDB();
 
 // Configuración de connect-mongo
 app.use(session({
-  secret: '1234567',
-  resave: false,
-  saveUninitialized: true,
+  secret: '123456',
+  resave: true,
+  saveUninitialized: false,
   store: MongoStore.create({ 
     mongoUrl: mongoURL 
   })
 }));
+
+// Inicializar Passport y la sesión de Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Rutas para productos, carritos y autenticación
 const productRoutes = require('./router/productRoutes');
@@ -53,6 +61,15 @@ app.use('/home', ensureAuthenticated, productRoutes);
 app.use('/cart', ensureAuthenticated, cartRoutes); 
 app.use('/messages', messageRoutes);
 app.use('/', authRoutes);
+
+// Ruta GET para realtimeProducts
+app.get('/realtimeProducts', ensureAuthenticated, (req, res) => {
+  if (req.user && req.user.role === 'admin') {
+    res.render('realtimeProducts', { user: req.user });
+  } else {
+    res.status(403).send('Acceso denegado');
+  }
+});
 
 // Ruta para la vista de chat
 app.get('/chat', ensureAuthenticated, (req, res) => {
@@ -70,7 +87,11 @@ app.get('/products', async (req, res) => {
     console.log("Products Data:", productsData);
     console.log("Payload in Products Data:", productsData.payload);
 
-    res.render('home', { products: productsData.payload, ...otrosDatos });
+    // Imprime el objeto user en la consola
+    console.log(req.user);
+
+    // Agrega los datos del usuario a los datos que se pasan a la vista
+    res.render('home', { products: productsData.payload, user: req.user });
   } catch (error) {
     // Manejo de errores
     console.error("Error al obtener productos:", error);

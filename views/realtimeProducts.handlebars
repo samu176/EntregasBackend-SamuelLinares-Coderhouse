@@ -6,6 +6,15 @@
   <title>Real-Time Productos</title>
 </head>
 <body>
+  {{#if user}}
+    <h2>Bienvenido, {{user.first_name}} {{user.last_name}}!</h2>
+    <p>Email: {{user.email}}</p>
+    <p>Rol: {{user.role}}</p>
+    <!-- Formulario de logout -->
+    <form action="/logout" method="post">
+      <button type="submit">Logout</button>
+    </form>
+  {{/if}}
   <h1>Real-Time Productos</h1>
   <ul id="productList"></ul>
 

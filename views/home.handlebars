@@ -19,6 +19,16 @@
   </style>
 </head>
 <body>
+  {{#if user}}
+    <h2>Bienvenido, {{user.first_name}} {{user.last_name}}!</h2>
+    <p>Email: {{user.email}}</p>
+    <p>Edad: {{user.age}}</p>
+    <p>Rol: {{user.role}}</p>
+    <!-- Formulario de logout -->
+    <form action="/logout" method="post">
+      <button type="submit">Logout</button>
+    </form>
+  {{/if}}
   <h1>Productos</h1>
   {{#each products}}
     <div class="product-card">
