@@ -89,7 +89,7 @@ app.get('/realtimeProducts', ensureAuthenticated, async (req, res) => {
 // Ruta para la vista de productos
 app.get('/products', async (req, res) => {
   try {
-    const filter = req.query.filter || {}; // Cambiado de 'query' a 'filter'
+    const filter = req.query.filter || {};
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
     const options = {
