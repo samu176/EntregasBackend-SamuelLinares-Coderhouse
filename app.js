@@ -52,37 +52,53 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Rutas para productos, carritos y autenticación
-const productRoutes = require('./router/productRoutes');
+const homeRoutes = require('./router/homeRoutes');
+const apiRoutes = require('./router/apiRoutes');
 const cartRoutes = require('./router/cartRoutes');
 const messageRoutes = require('./router/messageRoutes');
 const authRoutes = require('./router/authRoutes');
 
-app.use('/home', ensureAuthenticated, productRoutes);
+app.use('/home', ensureAuthenticated, homeRoutes);
+app.use('/api', ensureAuthenticated, apiRoutes);
 app.use('/cart', ensureAuthenticated, cartRoutes); 
 app.use('/messages', messageRoutes);
 app.use('/', authRoutes);
-
-// Ruta GET para realtimeProducts
-app.get('/realtimeProducts', ensureAuthenticated, (req, res) => {
-  if (req.user && req.user.role === 'admin') {
-    res.render('realtimeProducts', { user: req.user });
-  } else {
-    res.status(403).send('Acceso denegado');
-  }
-});
 
 // Ruta para la vista de chat
 app.get('/chat', ensureAuthenticated, (req, res) => {
   res.render('chat');
 });
 
+// Ruta para obtener todos los productos en tiempo real
+app.get('/realtimeProducts', ensureAuthenticated, async (req, res) => {
+  try {
+    if (req.user && req.user.role === 'admin') {
+      const result = await productManager.getProducts();
+      res.render('realtimeProducts', { 
+        user: req.user, 
+        products: result.payload, 
+      });
+    } else {
+      res.status(403).send('Acceso denegado');
+    }
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
 // Ruta para la vista de productos
 app.get('/products', async (req, res) => {
   try {
+    const filter = req.query.filter || {}; // Cambiado de 'query' a 'filter'
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
     const options = {
+      filter,
+      limit,
+      page
     };
 
-    const productsData = await getProducts(options);
+    const productsData = await productManager.getProducts(options);
 
     console.log("Products Data:", productsData);
     console.log("Payload in Products Data:", productsData.payload);
@@ -111,6 +127,19 @@ io.on('connection', (socket) => {
       io.emit('chatMessage', newMessage);
     } catch (error) {
       console.error('Error cargando los mensajes', error);
+    }
+  });
+
+  socket.on('newProduct', async (productData) => {
+    try {
+      // Agrega el nuevo producto a la base de datos
+      const newProduct = await productManager.addProduct(productData);
+      // Obtiene la lista actualizada de productos
+      const products = await productManager.getProducts({});
+      // Emite el evento 'updateProducts' con la lista actualizada de productos
+      io.emit('updateProducts', products);
+    } catch (error) {
+      console.error('Error al agregar el producto', error);
     }
   });
 

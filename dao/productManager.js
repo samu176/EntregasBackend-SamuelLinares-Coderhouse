@@ -26,40 +26,45 @@ const addProduct = async (productData) => {
   }
 };
 
-const getProducts = async (options) => {
+const getProducts = async (options = {}) => {
   try {
-    const { limit = 10, page = 1, sort, query } = options;
+    const { limit, page, sort, query } = options;
     const filter = query ? { category: query } : {};
     const sortOptions = sort ? { price: sort === 'asc' ? 1 : -1 } : {};
 
-    const result = await Product.paginate(filter, {
-      limit,
-      page,
-      sort: sortOptions,
-      lean: true, 
-    });
+    if (limit && page) {
+      const result = await Product.paginate(filter, {
+        limit,
+        page,
+        sort: sortOptions,
+        lean: true, 
+      });
 
-    console.log('Result.docs:', result.docs);
-    console.log('Result.totalPages:', result.totalPages);
-    console.log('Result.page:', result.page);
-
-    return {
-      status: 'success',
-      payload: result.docs,
-      totalPages: result.totalPages,
-      prevPage: result.prevPage,
-      nextPage: result.nextPage,
-      page: result.page,
-      hasPrevPage: result.hasPrevPage,
-      hasNextPage: result.hasNextPage,
-      prevLink: result.prevPage ? `/api/home?limit=${limit}&page=${result.prevPage}` : null,
-      nextLink: result.nextPage ? `/api/home?limit=${limit}&page=${result.nextPage}` : null,
-    };
+      return {
+        status: 'success',
+        payload: result.docs,
+        totalPages: result.totalPages,
+        prevPage: result.prevPage,
+        nextPage: result.nextPage,
+        page: result.page,
+        hasPrevPage: result.hasPrevPage,
+        hasNextPage: result.hasNextPage,
+        prevLink: result.prevPage ? `/home?limit=${limit}&page=${result.prevPage}` : null,
+        nextLink: result.nextPage ? `/home?limit=${limit}&page=${result.nextPage}` : null,
+      };
+    } else {
+      const result = await Product.find(filter).sort(sortOptions).lean();
+      return {
+        status: 'success',
+        payload: result,
+      };
+    }
   } catch (error) {
     console.error('Error al obtener productos', error.message);
     throw new Error(error.message);
   }
 };
+
 
 const getProductById = async (productId) => {
   try {
