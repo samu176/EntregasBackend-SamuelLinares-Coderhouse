@@ -10,6 +10,7 @@ const { connectToMongoDB } = require('./db/mongoConnect');
 const config = require('./config/config'); 
 const ensureAuthenticated = require('./middleware/authMiddleware');
 const passport = require('./config/passport');
+const { homeRoutes, apiRoutes, cartRoutes, messageRoutes, authRoutes } = require('./router');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -52,13 +53,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Rutas para productos, carritos y autenticación
-const homeRoutes = require('./router/homeRoutes');
-const apiRoutes = require('./router/apiRoutes');
-const cartRoutes = require('./router/cartRoutes');
-const messageRoutes = require('./router/messageRoutes');
-const authRoutes = require('./router/authRoutes');
-
+// Uso de rutas para el home, la API, los carritos, los mensajes y la autenticación
 app.use('/home', ensureAuthenticated, homeRoutes);
 app.use('/api', ensureAuthenticated, apiRoutes);
 app.use('/cart', ensureAuthenticated, cartRoutes); 
