@@ -6,7 +6,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const productManager = require('./dao/productManager');
 const messageManager = require('./dao/messageManager');
-const { connectToMongoDB, mongoURL } = require('./db/mongoConnect');
+const { connectToMongoDB } = require('./db/mongoConnect');
+const config = require('./config/config'); 
 const ensureAuthenticated = require('./middleware/authMiddleware');
 const passport = require('./config/passport');
 const app = express();
@@ -43,7 +44,7 @@ app.use(session({
   resave: true,
   saveUninitialized: false,
   store: MongoStore.create({ 
-    mongoUrl: mongoURL 
+    mongoUrl: config.mongoUrl
   })
 }));
 

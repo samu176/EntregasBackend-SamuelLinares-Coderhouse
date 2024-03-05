@@ -1,3 +1,4 @@
+const config = require('./config');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const GitHubStrategy = require('passport-github').Strategy;
@@ -9,7 +10,7 @@ passport.use(new LocalStrategy({
   passwordField: 'password'
 }, async (email, password, done) => {
   // Verificar si las credenciales son del admin
-  if (email === 'adminCoder@coder.com' && password === 'adminCod3r123') {
+  if (email === config.adminEmail && password === config.adminPassword) {
     return done(null, { _id: 'admin', role: 'admin' });
   }
 
@@ -30,9 +31,9 @@ passport.use(new LocalStrategy({
 
 // Configurar la estrategia de GitHub
 passport.use(new GitHubStrategy({
-    clientID: 'Iv1.c8cbb752f7461f00',
-    clientSecret: '1153b9cc5103b61840eae7e3fe764f2ad801a9c7',
-    callbackURL: "http://localhost:8080/auth/github/callback"
+    clientID: config.githubClientId,
+    clientSecret: config.githubClientSecret,
+    callbackURL: config.githubCallbackUrl
   },
   function(accessToken, refreshToken, profile, cb) {
     // Buscar o crear un usuario con githubId
