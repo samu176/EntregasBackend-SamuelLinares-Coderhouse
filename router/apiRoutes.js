@@ -1,5 +1,6 @@
 const express = require('express');
 const productManager = require('../dao/productManager');
+const generateProducts = require('../utils/mocking');
 const router = express.Router();
 
 // Ruta GET para /api/products
@@ -12,6 +13,12 @@ router.get('/products', async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });
   }
+});
+
+// Endpoint /mockingproducts
+router.get('/mockingproducts', (req, res) => {
+  const products = generateProducts();
+  res.json(products);
 });
 
 // Ruta para obtener detalles de un producto por su id

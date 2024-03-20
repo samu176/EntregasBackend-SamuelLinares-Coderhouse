@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const authManager = require('../dao/authManager'); 
+const authManager = require('../controllers/authManager');
+const sendMail = require('../config/mailer'); // Importar la función sendMail
 
 // Ruta GET para el formulario de registro
 router.get('/register', (req, res) => {
@@ -18,6 +19,8 @@ router.post('/register', async (req, res, next) => {
         console.error('Error al logear despues de registrarse:', err);
         return next(err);
       }
+      // Enviar correo electrónico de bienvenida
+      sendMail(email, 'Gracias por registrarte en nuestra página', 'Hola gracias por registrarte en nuestra página. ¡Que tengas un buen día!');
       return res.redirect('/home'); // Redirigir a home después del registro
     });
   } catch (error) {
@@ -62,7 +65,16 @@ router.post('/logout', (req, res) => {
 
 // Ruta GET para el perfil del usuario
 router.get('/profile', (req, res) => {
-  res.render('profile', { user: req.session.user });
+  // Crear un DTO del usuario con solo la información necesaria
+  const userDto = {
+    id: req.session.user.id,
+    first_name: req.session.user.first_name,
+    last_name: req.session.user.last_name,
+    email: req.session.user.email,
+    age: req.session.user.age,
+  };
+
+  res.render('profile', { user: userDto });
 });
 
 module.exports = router;
