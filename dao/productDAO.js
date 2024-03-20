@@ -2,20 +2,24 @@ const Product = require('../models/productModel');
 
 class ProductDAO {
   async getProductById(id) {
-    return Product.findById(id);
+    const product = await Product.findById(id);
+    return product ? this.toDTO(product) : null;
   }
 
   async createProduct(product) {
     const newProduct = new Product(product);
-    return newProduct.save();
+    const savedProduct = await newProduct.save();
+    return this.toDTO(savedProduct);
   }
 
   async updateProduct(id, product) {
-    return Product.findByIdAndUpdate(id, product, { new: true });
+    const updatedProduct = await Product.findByIdAndUpdate(id, product, { new: true });
+    return updatedProduct ? this.toDTO(updatedProduct) : null;
   }
 
   async deleteProduct(id) {
-    return Product.findByIdAndDelete(id);
+    const deletedProduct = await Product.findByIdAndDelete(id);
+    return deletedProduct ? this.toDTO(deletedProduct) : null;
   }
 
   async getProducts(options = {}) {
@@ -24,20 +28,39 @@ class ProductDAO {
     const sortOptions = sort ? { price: sort === 'asc' ? 1 : -1 } : {};
 
     if (limit && page) {
-      return Product.paginate(filter, {
+      const result = await Product.paginate(filter, {
         limit,
         page,
         sort: sortOptions,
         lean: true, 
       });
+      return {
+        ...result,
+        docs: result.docs.map(doc => this.toDTO(doc))
+      };
     } else {
-      return Product.find(filter).sort(sortOptions).lean();
+      const result = await Product.find(filter).sort(sortOptions).lean();
+      return result.map(doc => this.toDTO(doc));
     }
   }
 
   async addProduct(productData) {
     const newProduct = new Product(productData);
-    return newProduct.save();
+    const savedProduct = await newProduct.save();
+    return this.toDTO(savedProduct);
+  }
+
+  toDTO(product) {
+    return {
+      id: product._id,
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      thumbnails: product.thumbnails,
+      code: product.code,
+      stock: product.stock,
+      category: product.category,
+    };
   }
 }
 

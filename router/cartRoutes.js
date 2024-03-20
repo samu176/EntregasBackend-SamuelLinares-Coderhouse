@@ -75,4 +75,15 @@ router.delete('/:cid', async (req, res) => {
   res.send(result);
 });
 
+// POST 
+router.post('/:cid/purchase', async (req, res) => {
+  const { cid } = req.params;
+  const result = await cartManager.purchaseCart(cid);
+  if (result.success) {
+    res.json(result.payload);
+  } else {
+    res.status(500).json({ error: 'Error finalizando la compra' });
+  }
+});
+
 module.exports = router;
