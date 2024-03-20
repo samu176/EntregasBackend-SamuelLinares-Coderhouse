@@ -11,6 +11,7 @@ const config = require('./config/config');
 const ensureAuthenticated = require('./middleware/authMiddleware');
 const passport = require('./config/passport');
 const { homeRoutes, apiRoutes, cartRoutes, messageRoutes, authRoutes } = require('./router');
+const errorHandler = require('./utils/errorHandler');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -52,6 +53,8 @@ app.use(session({
 // Inicializar Passport y la sesión de Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(errorHandler); // Usar el middleware de manejo de errores
 
 // Uso de rutas para el home, la API, los carritos, los mensajes y la autenticación
 app.use('/home', ensureAuthenticated, homeRoutes);
