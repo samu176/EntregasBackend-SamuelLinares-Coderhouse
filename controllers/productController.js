@@ -4,7 +4,7 @@ async function addProduct(productData) {
   try {
     return await ProductRepository.addProduct(productData);
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error('AddProductError');
   }
 };
 
@@ -13,7 +13,7 @@ async function getProducts(options = {}) {
     return await ProductRepository.getProducts(options);
   } catch (error) {
     console.error('Error al obtener productos', error.message);
-    throw new Error(error.message);
+    throw new Error('GetProductsError');
   }
 };
 
@@ -21,7 +21,7 @@ async function getProductById(productId) {
   try {
     return await ProductRepository.getProductById(productId);
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error('GetProductByIdError');
   }
 };
 
@@ -29,7 +29,7 @@ async function updateProduct(productId, newData) {
   try {
     return await ProductRepository.updateProduct(productId, newData);
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error('UpdateProductError');
   }
 };
 
@@ -37,7 +37,7 @@ async function deleteProduct(productId) {
   try {
     return await ProductRepository.deleteProduct(productId);
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error('DeleteProductError');
   }
 };
 
@@ -53,7 +53,7 @@ async function updateStock(productId, newStock) {
     return true;
   } catch (error) {
     console.error('Error actualizando el stock del producto', error.message);
-    throw new Error(error.message);
+    throw new Error('UpdateStockError');
   }
 };
 
