@@ -7,7 +7,7 @@ const createCart = async () => {
     return await CartDAO.createCart();
   } catch (error) {
     console.error(error);
-    throw new Error('Error creando el nuevo carrito'); 
+    throw new Error('CreateCartError'); 
   }
 };
 
@@ -17,7 +17,7 @@ const getCartById = async (cartId) => {
     return await CartDAO.getCartById(cartId);
   } catch (error) {
     console.error(error);
-    throw new Error('Error obteniendo el carrito por ID');
+    throw new Error('GetCartByIdError');
   }
 };
 
@@ -27,7 +27,7 @@ const addProductToCart = async (cartId, productId, quantity) => {
     return await CartDAO.addProductToCart(cartId, productId, quantity);
   } catch (error) {
     console.error(error);
-    throw new Error('Error agregando producto al carrito');
+    throw new Error('AddProductToCartError');
   }
 };
 
@@ -37,7 +37,7 @@ const removeProduct = async (cartId, productId) => {
     return await CartDAO.removeProduct(cartId, productId);
   } catch (error) {
     console.error(error);
-    throw new Error('Error eliminando producto del carrito');
+    throw new Error('RemoveProductError');
   }
 };
 
@@ -47,7 +47,7 @@ const updateCart = async (cartId, products) => {
     return await CartDAO.updateCart(cartId, products);
   } catch (error) {
     console.error(error);
-    throw new Error('Error actualizando el carrito');
+    throw new Error('UpdateCartError');
   }
 };
 
@@ -57,7 +57,7 @@ const updateProductQuantity = async (cartId, productId, quantity) => {
     return await CartDAO.updateProductQuantity(cartId, productId, quantity);
   } catch (error) {
     console.error(error);
-    throw new Error('Error actualizando la cantidad del producto');
+    throw new Error('UpdateProductQuantityError');
   }
 };
 
@@ -67,7 +67,7 @@ const clearCart = async (cartId) => {
     return await CartDAO.clearCart(cartId);
   } catch (error) {
     console.error(error);
-    throw new Error('Error al limpiar el carrito');
+    throw new Error('ClearCartError');
   }
 };
 
@@ -76,7 +76,7 @@ const purchaseCart = async (cartId) => {
   try {
     const cart = await getCartById(cartId);
     if (!cart) {
-      throw new Error('Carrito no encontrado');
+      throw new Error('CartNotFoundError');
     }
 
     const notPurchasedProducts = [];
@@ -98,7 +98,7 @@ const purchaseCart = async (cartId) => {
     return { success: true, payload: 'Compra finalizada con éxito' };
   } catch (error) {
     console.error(error);
-    throw new Error('Error finalizando la compra');
+    throw new Error('PurchaseCartError');
   }
 };
 
