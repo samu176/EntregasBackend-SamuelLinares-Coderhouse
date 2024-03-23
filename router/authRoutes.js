@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const authManager = require('../controllers/authManager');
+const authController = require('../controllers/authController');
 const sendMail = require('../config/mailer'); // Importar la función sendMail
 
 // Ruta GET para el formulario de registro
@@ -12,7 +12,7 @@ router.get('/register', (req, res) => {
 router.post('/register', async (req, res, next) => {
   const { first_name, last_name, email, age, password } = req.body;
   try {
-    const user = await authManager.register(first_name, last_name, email, age, password);
+    const user = await authController.register(first_name, last_name, email, age, password);
     console.log('Usuario creado:', user);
     req.login(user, function(err) {
       if (err) {

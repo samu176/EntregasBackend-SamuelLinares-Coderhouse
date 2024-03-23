@@ -1,4 +1,4 @@
-const MessageDAO = require('./dao/messageDAO');
+const MessageDAO = require('../dao/messageDAO');
 
 // Obtener todos los mensajes
 const getMessages = async () => {

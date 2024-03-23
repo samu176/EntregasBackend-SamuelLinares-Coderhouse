@@ -1,5 +1,5 @@
-const CartDAO = require('./dao/cartDAO');
-const productManager = require('./productManager');
+const CartDAO = require('../dao/cartDAO');
+const productController = require('./productController');
 
 // Crear un nuevo carrito
 const createCart = async () => {
@@ -81,11 +81,11 @@ const purchaseCart = async (cartId) => {
 
     const notPurchasedProducts = [];
     for (const product of cart.products) {
-      const productInfo = await productManager.getProductById(product.productId);
+      const productInfo = await productController.getProductById(product.productId);
       if (productInfo.stock < product.quantity) {
         notPurchasedProducts.push(product);
       } else {
-        await productManager.updateStock(product.productId, productInfo.stock - product.quantity);
+        await productController.updateStock(product.productId, productInfo.stock - product.quantity);
       }
     }
 
