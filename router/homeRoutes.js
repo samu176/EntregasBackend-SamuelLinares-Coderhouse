@@ -1,5 +1,5 @@
 const express = require('express');
-const productManager = require('../dao/productManager');
+const productController = require('../controllers/productController');
 const router = express.Router();
 const ensureAuthenticated = require('../middleware/authMiddleware');
 
@@ -8,9 +8,12 @@ router.get('/', async (req, res) => {
   try {
     const { limit = 10, page = 1, sort, query } = req.query;
     const options = { limit: parseInt(limit), page: parseInt(page), sort, query };
-    const result = await productManager.getProducts(options);
+    const result = await productController.getProducts(options);
 
-    const { payload, totalPages, prevPage, nextPage, page: currentPage, hasPrevPage, hasNextPage, prevLink, nextLink } = result;
+    const { payload, totalPages, prevPage, nextPage, page: currentPage, hasPrevPage, hasNextPage } = result;
+
+    const prevLink = hasPrevPage ? `/home?page=${prevPage}` : null;
+    const nextLink = hasNextPage ? `/home?page=${nextPage}` : null;
 
     res.render('home', { 
       user: req.user, 

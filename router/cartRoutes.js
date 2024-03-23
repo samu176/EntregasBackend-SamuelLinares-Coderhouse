@@ -1,15 +1,15 @@
 const express = require('express');
-const cartManager = require('../dao/cartManager');
+const cartController = require('../controllers/cartController');
 const router = express.Router();
 
 router.post('/', (req, res) => {
-  const newCart = cartManager.createCart();
+  const newCart = cartController.createCart();
   res.json(newCart);
 });
 
 router.get('/', async (req, res) => {
   const cartId = '65baddfac0916ba71d3445f2';
-  const cart = await cartManager.getCartById(cartId);
+  const cart = await cartController.getCartById(cartId);
   if (cart) {
     res.render('carts', { cart });
   } else {
@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:cid', async (req, res) => {
   const cartId = req.params.cid;
-  const cart = await cartManager.getCartById(cartId);
+  const cart = await cartController.getCartById(cartId);
   if (cart) {
     res.render('carts', { cart });
   } else {
@@ -32,12 +32,12 @@ router.post('/product/:pid', async (req, res) => {
   const quantity = req.body.quantity || 1;
   const cartId = req.body.cartId;
 
-  const cart = await cartManager.getCartById(cartId);
+  const cart = await cartController.getCartById(cartId);
   if (!cart) {
     return res.status(404).json({ error: 'Carrito no encontrado' });
   }
 
-  const result = await cartManager.addProductToCart(cartId, productId, quantity);
+  const result = await cartController.addProductToCart(cartId, productId, quantity);
   if (result) {
     res.json(cart);
   } else {
@@ -48,7 +48,7 @@ router.post('/product/:pid', async (req, res) => {
 // DELETE 
 router.delete('/:cid/products/:pid', async (req, res) => {
   const { cid, pid } = req.params;
-  const result = await cartManager.removeProduct(cid, pid);
+  const result = await cartController.removeProduct(cid, pid);
   res.send(result);
 });
 
@@ -56,7 +56,7 @@ router.delete('/:cid/products/:pid', async (req, res) => {
 router.put('/:cid', async (req, res) => {
   const { cid } = req.params;
   const products = req.body;
-  const result = await cartManager.updateCart(cid, products);
+  const result = await cartController.updateCart(cid, products);
   res.send(result);
 });
 
@@ -64,21 +64,21 @@ router.put('/:cid', async (req, res) => {
 router.put('/:cid/products/:pid', async (req, res) => {
   const { cid, pid } = req.params;
   const { quantity } = req.body;
-  const result = await cartManager.updateProductQuantity(cid, pid, quantity);
+  const result = await cartController.updateProductQuantity(cid, pid, quantity);
   res.send(result);
 });
 
 // DELETE 
 router.delete('/:cid', async (req, res) => {
   const { cid } = req.params;
-  const result = await cartManager.clearCart(cid);
+  const result = await cartController.clearCart(cid);
   res.send(result);
 });
 
 // POST 
 router.post('/:cid/purchase', async (req, res) => {
   const { cid } = req.params;
-  const result = await cartManager.purchaseCart(cid);
+  const result = await cartController.purchaseCart(cid);
   if (result.success) {
     res.json(result.payload);
   } else {

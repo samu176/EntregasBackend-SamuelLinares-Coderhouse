@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const messageManager = require('../dao/messageManager');
+const messageController = require('../controllers/messageController');
 
 // Obtener todos los mensajes
 router.get('/', async (req, res) => {
   try {
-    const messages = await messageManager.getMessages();
+    const messages = await messageController.getMessages();
     res.json(messages);
   } catch (error) {
     console.error(error);
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { name, message } = req.body;
-    const newMessage = await messageManager.addMessage(name, message);
+    const newMessage = await messageController.addMessage(name, message);
     res.json(newMessage);
   } catch (error) {
     console.error(error);

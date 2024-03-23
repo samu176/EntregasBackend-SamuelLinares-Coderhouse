@@ -46,6 +46,7 @@ class UserDAO {
       email: user.email,
       age: user.age,
       role: user.role,
+      password: user.password, // Agrega esta línea
     };
   }
 }

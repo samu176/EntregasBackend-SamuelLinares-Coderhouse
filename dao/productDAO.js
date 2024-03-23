@@ -53,13 +53,14 @@ class ProductDAO {
         });
         return {
           ...result,
-          docs: result.docs.map(doc => this.toDTO(doc))
+          payload: result.docs.map(doc => this.toDTO(doc))
         };
       } else {
         const result = await Product.find(filter).sort(sortOptions).lean();
         return result.map(doc => this.toDTO(doc));
       }
     } catch (error) {
+      console.error('Error en getProducts:', error);
       throw new Error('GetProductsError');
     }
   }

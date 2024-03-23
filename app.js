@@ -4,8 +4,8 @@ const http = require('http');
 const socketIO = require('socket.io');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const productManager = require('./dao/productManager');
-const messageManager = require('./dao/messageManager');
+const productController = require('./controllers/productController');
+const messageController = require('./controllers/messageController');
 const { connectToMongoDB } = require('./db/mongoConnect');
 const config = require('./config/config'); 
 const ensureAuthenticated = require('./middleware/authMiddleware');
@@ -29,6 +29,11 @@ app.engine('handlebars', exphbs.engine({
 }));
 
 app.set('view engine', 'handlebars');
+
+// Registro del helper de Handlebars
+Handlebars.registerHelper('log', function(something) {
+  console.log(something);
+});
 
 // Configuración de archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
@@ -72,10 +77,10 @@ app.get('/chat', ensureAuthenticated, (req, res) => {
 app.get('/realtimeProducts', ensureAuthenticated, async (req, res) => {
   try {
     if (req.user && req.user.role === 'admin') {
-      const result = await productManager.getProducts();
+      const result = await productController.getProducts();
       res.render('realtimeProducts', { 
         user: req.user, 
-        products: result.payload, 
+        products: result.payload, // Cambia result.docs a result.payload
       });
     } else {
       res.status(403).send('Acceso denegado');
@@ -97,16 +102,16 @@ app.get('/products', async (req, res) => {
       page
     };
 
-    const productsData = await productManager.getProducts(options);
+    const productsData = await productController.getProducts(options);
 
     console.log("Products Data:", productsData);
-    console.log("Payload in Products Data:", productsData.payload);
+    console.log("Payload in Products Data:", productsData.payload); // Cambia productsData.docs a productsData.payload
 
     // Imprime el objeto user en la consola
     console.log(req.user);
 
     // Agrega los datos del usuario a los datos que se pasan a la vista
-    res.render('home', { products: productsData.payload, user: req.user });
+    res.render('home', { products: productsData.payload, user: req.user }); // Cambia productsData.docs a productsData.payload
   } catch (error) {
     // Manejo de errores
     console.error("Error al obtener productos:", error);
@@ -121,7 +126,7 @@ io.on('connection', (socket) => {
   socket.on('chatMessage', async (data) => {
     try {
       // Guarda el mensaje en la base de datos
-      const newMessage = await messageManager.addMessage(data.name, data.message);
+      const newMessage = await messageController.addMessage(data.name, data.message);
       // Emite el mensaje a todos los clientes
       io.emit('chatMessage', newMessage);
     } catch (error) {
@@ -132,9 +137,9 @@ io.on('connection', (socket) => {
   socket.on('newProduct', async (productData) => {
     try {
       // Agrega el nuevo producto a la base de datos
-      const newProduct = await productManager.addProduct(productData);
+      const newProduct = await productController.addProduct(productData);
       // Obtiene la lista actualizada de productos
-      const products = await productManager.getProducts({});
+      const products = await productController.getProducts({});
       // Emite el evento 'updateProducts' con la lista actualizada de productos
       io.emit('updateProducts', products);
     } catch (error) {
