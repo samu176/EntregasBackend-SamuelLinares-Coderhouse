@@ -6,7 +6,7 @@ function ensureAuthenticated(req, res, next) {
     }
 
     // Verificar si el usuario es un usuario normal para las rutas de chat y carrito
-    if ((req.path.startsWith('/chat') || req.path.startsWith('/cart')) && req.user.role !== 'user') {
+    if ((req.path.startsWith('/chat') || req.path.startsWith('/cart')) && req.user.role !== 'usuario') {
       return res.redirect('/home'); // redirige a los usuarios que no son rol "usuario" a la página de inicio
     }
 
