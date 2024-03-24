@@ -13,10 +13,10 @@ const getMessages = async () => {
 // Agregar un nuevo mensaje
 const addMessage = async (name, message) => {
   try {
-    return await MessageDAO.addMessage(name, message);
+    return await MessageDAO.createMessage({name, message});
   } catch (error) {
     console.error(error);
-    throw new Error('Error al guardar en la base de datos');
+    throw new Error('Error al guardar el mensaje en la base de datos');
   }
 };
 
