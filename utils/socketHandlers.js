@@ -2,8 +2,16 @@ const productController = require('../controllers/productController');
 const messageController = require('../controllers/messageController');
 
 module.exports = function(io) {
-  io.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     console.log('Un usuario se ha conectado al chat');
+
+    // Envía todos los productos existentes al cliente que acaba de conectarse
+    try {
+      const products = await productController.getProducts({});
+      socket.emit('updateProducts', products);
+    } catch (error) {
+      console.error('Error al obtener los productos', error);
+    }
 
     socket.on('chatMessage', async (data) => {
       try {

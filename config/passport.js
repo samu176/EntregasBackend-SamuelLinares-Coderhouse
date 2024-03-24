@@ -9,16 +9,19 @@ passport.use(new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password'
 }, async (email, password, done) => {
-  console.log(email); // Agregar esto
-  console.log(password); // Agregar esto
   // Verificar si las credenciales son del admin
   if (email === config.adminEmail && password === config.adminPassword) {
-    return done(null, { id: 'admin', role: 'admin' });
+    return done(null, { 
+      id: 'admin', 
+      role: 'admin',
+      first_name: 'Administrador',
+      last_name: '',
+      email: config.adminEmail
+    });
   }
 
   // Buscar el usuario en la base de datos
   const user = await userController.findUser(email);
-  console.log(user); // Agregar esto
   if (!user) {
     return done(null, false, { message: 'Usuario no encontrado' });
   }
@@ -60,10 +63,30 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   if (id === 'admin') {
-    done(null, { id: 'admin', role: 'admin' });
+    done(null, { 
+      id: 'admin', 
+      role: 'admin',
+      first_name: 'Administrador',
+      last_name: '',
+      email: config.adminEmail,
+      age: 30
+    });
   } else {
     const user = await userController.findUserById(id);
-    done(null, user);
+    if (user) {
+      // Crear un objeto de usuario con todos los campos que necesitas
+      const userDto = {
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        age: user.age,
+        role: user.role,
+      };
+      done(null, userDto);
+    } else {
+      done(new Error('User not found'), null);
+    }
   }
 });
 

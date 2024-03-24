@@ -8,7 +8,7 @@ const { connectToMongoDB } = require('./db/mongoConnect');
 const config = require('./config/config'); 
 const ensureAuthenticated = require('./middleware/authMiddleware');
 const passport = require('./config/passport');
-const { homeRoutes, apiRoutes, cartRoutes, messageRoutes, authRoutes } = require('./router');
+const { homeRoutes, apiRoutes, cartRoutes, messageRoutes, authRoutes, realtimeRoutes } = require('./router');
 const errorHandler = require('./utils/errorHandler');
 const socketHandlers = require('./utils/socketHandlers');
 const app = express();
@@ -60,62 +60,17 @@ app.use(passport.session());
 
 app.use(errorHandler); // Usar el middleware de manejo de errores
 
-// Uso de rutas para el home, la API, los carritos, los mensajes y la autenticación
+// Uso de rutas para el home, la API, los carritos, los mensajes, la autenticación y los productos en tiempo real
 app.use('/home', ensureAuthenticated, homeRoutes);
 app.use('/api', ensureAuthenticated, apiRoutes);
 app.use('/cart', ensureAuthenticated, cartRoutes); 
 app.use('/messages', messageRoutes);
 app.use('/', authRoutes);
+app.use('/realtime', realtimeRoutes);
 
 // Ruta para la vista de chat
 app.get('/chat', ensureAuthenticated, (req, res) => {
   res.render('chat');
-});
-
-// Ruta para obtener todos los productos en tiempo real
-app.get('/realtimeProducts', ensureAuthenticated, async (req, res) => {
-  try {
-    if (req.user && req.user.role === 'admin') {
-      const result = await productController.getProducts();
-      res.render('realtimeProducts', { 
-        user: req.user, 
-        products: result.payload,
-      });
-    } else {
-      res.status(403).send('Acceso denegado');
-    }
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
-});
-
-// Ruta para la vista de productos
-app.get('/products', async (req, res) => {
-  try {
-    const filter = req.query.filter || {};
-    const limit = parseInt(req.query.limit) || 10;
-    const page = parseInt(req.query.page) || 1;
-    const options = {
-      filter,
-      limit,
-      page
-    };
-
-    const productsData = await productController.getProducts(options);
-
-    console.log("Products Data:", productsData);
-    console.log("Payload in Products Data:", productsData.payload);
-
-    // Imprime el objeto user en la consola
-    console.log(req.user);
-
-    // Agrega los datos del usuario a los datos que se pasan a la vista
-    res.render('home', { products: productsData.payload, user: req.user });
-  } catch (error) {
-    // Manejo de errores
-    console.error("Error al obtener productos:", error);
-    res.status(500).send("Error interno del servidor");
-  }
 });
 
 // Manejo de mensajes de chat con Socket.IO
