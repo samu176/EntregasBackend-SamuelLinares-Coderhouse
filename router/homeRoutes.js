@@ -32,4 +32,33 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Ruta para la vista de productos
+router.get('/products', async (req, res) => {
+  try {
+    const filter = req.query.filter || {};
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const options = {
+      filter,
+      limit,
+      page
+    };
+
+    const productsData = await productController.getProducts(options);
+
+    console.log("Products Data:", productsData);
+    console.log("Payload in Products Data:", productsData.payload);
+
+    // Imprime el objeto user en la consola
+    console.log(req.user);
+
+    // Agrega los datos del usuario a los datos que se pasan a la vista
+    res.render('home', { products: productsData.payload, user: req.user });
+  } catch (error) {
+    // Manejo de errores
+    console.error("Error al obtener productos:", error);
+    res.status(500).send("Error interno del servidor");
+  }
+});
+
 module.exports = router;

@@ -10,10 +10,10 @@ async function register(first_name, last_name, email, age, password) {
 }
 
 async function login(email, password) {
-  console.log(email); // Agregar esto
-  console.log(password); // Agregar esto
+  console.log(email);
+  console.log(password);
   const user = await userController.findUser(email);
-  console.log(user); // Agregar esto
+  console.log(user);
   if (user) {
     // Verificar la contraseña hasheada
     const match = await bcrypt.compare(password, user.password);

@@ -41,12 +41,12 @@ class UserDAO {
   toDTO(user) {
     return {
       id: user._id,
-      firstName: user.first_name,
-      lastName: user.last_name,
+      first_name: user.first_name,
+      last_name: user.last_name,
       email: user.email,
       age: user.age,
       role: user.role,
-      password: user.password, // Agrega esta línea
+      password: user.password,
     };
   }
 }
