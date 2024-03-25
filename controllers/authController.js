@@ -1,12 +1,22 @@
 const bcrypt = require('bcrypt');
 const userController = require('./userController');
+const cartController = require('./cartController');
 
 const saltRounds = 10;
 
-async function register(first_name, last_name, email, age, password) {
+async function register(req, first_name, last_name, email, age, password) {
   // Hashear la contraseña antes de guardarla
   const hashedPassword = await bcrypt.hash(password, saltRounds);
-  return userController.createUser(first_name, last_name, email, age, hashedPassword);
+  const user = await userController.createUser(first_name, last_name, email, age, hashedPassword);
+  
+  // Crear un carrito para el usuario
+  const newCart = await cartController.createCart();
+  console.log('Carrito creado:', newCart);
+
+  // Almacenar el ID del carrito en la sesión del usuario
+  req.session.cartId = newCart._id;
+
+  return user;
 }
 
 async function login(email, password) {
