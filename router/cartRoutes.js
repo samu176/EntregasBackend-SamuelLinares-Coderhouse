@@ -36,17 +36,20 @@ router.get('/', async (req, res) => {
 
 // Agregar un producto al carrito
 router.post('/product/:pid', async (req, res) => {
+  console.log(`Sesión actual: ${JSON.stringify(req.session)}`); // Agrega este log
   const productId = req.params.pid;
   const quantity = req.body.quantity || 1;
   console.log(`Agregando producto al carrito. Producto ID: ${productId}, Cantidad: ${quantity}`);
 
-  try {
-    const cartId = req.session.cartId;
-    if (!cartId) {
-      console.log('No se encontró el ID del carrito en la sesión para agregar producto.');
-      return res.status(404).json({ error: 'Carrito no encontrado.' });
-    }
+  const cartId = req.session.cartId;
+  console.log(`Cart ID obtenido de la sesión: ${cartId}`); // Agrega este log
 
+  if (!cartId) {
+    console.log('No se encontró el ID del carrito en la sesión para agregar producto.');
+    return res.status(404).json({ error: 'Carrito no encontrado.' });
+  }
+
+  try {
     const result = await cartController.addProductToCart(cartId, productId, quantity);
     console.log(`Producto agregado con éxito al carrito. Carrito ID: ${cartId}, Producto ID: ${productId}`);
     res.json(result);
