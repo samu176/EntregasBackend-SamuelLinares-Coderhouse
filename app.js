@@ -55,7 +55,7 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-  console.log(`Sesión en middleware personalizado: ${JSON.stringify(req.session)}`); // Agrega este log
+  console.log(`Sesión en middleware personalizado: ${JSON.stringify(req.session)}`);
   next();
 });
 
