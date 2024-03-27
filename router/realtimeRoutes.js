@@ -8,7 +8,7 @@ router.get('/realtimeProducts', ensureAuthenticated, async (req, res) => {
   try {
     if (req.user && req.user.role === 'admin') {
       const result = await productController.getProducts();
-      console.log(req.user); // Agrega esta línea
+      console.log(req.user);
       res.render('realtimeProducts', { 
         user: req.user, 
         products: result.payload, 

@@ -50,20 +50,18 @@
       {{#if this.stock}}
         <p>Stock: {{this.stock}}</p>
       {{/if}}
-    <form action="/cart/product/{{this._id}}" method="post">
-      <input type="hidden" name="quantity" value="1">
-      <input type="hidden" name="cartId" value="65baddfac0916ba71d3445f2">
-      <button type="submit">Agregar al carrito</button>
-    </form>
+      <form action="/cart/product/{{this.id}}" method="post">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit">Agregar al carrito</button>
+      </form>
     </div>
   {{/each}}
-
   <div>
     {{#if hasNextPage}}
-      <a href="{{nextLink}}">Siguiente pagina</a>
+      <a href="{{nextLink}}">Siguiente página</a>
     {{/if}}
     {{#if hasPrevPage}}
-      <a href="{{prevLink}}">Pagina anterior</a>
+      <a href="{{prevLink}}">Página anterior</a>
     {{/if}}
   </div>
 </body>

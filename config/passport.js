@@ -74,7 +74,7 @@ passport.deserializeUser(async (id, done) => {
   } else {
     const user = await userController.findUserById(id);
     if (user) {
-      // Crear un objeto de usuario con todos los campos que necesitas
+      // Crear un objeto de usuario con todos los campos que se necesitan
       const userDto = {
         id: user.id,
         first_name: user.first_name,
@@ -82,6 +82,7 @@ passport.deserializeUser(async (id, done) => {
         email: user.email,
         age: user.age,
         role: user.role,
+        cartId: user.cartId 
       };
       done(null, userDto);
     } else {
