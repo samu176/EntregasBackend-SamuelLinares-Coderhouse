@@ -54,6 +54,11 @@ app.use(session({
   })
 }));
 
+app.use((req, res, next) => {
+  console.log(`Sesión en middleware personalizado: ${JSON.stringify(req.session)}`); // Agrega este log
+  next();
+});
+
 // Inicializar Passport y la sesión de Passport
 app.use(passport.initialize());
 app.use(passport.session());

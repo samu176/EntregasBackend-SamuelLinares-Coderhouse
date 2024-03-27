@@ -15,8 +15,12 @@ router.get('/', async (req, res) => {
     const prevLink = hasPrevPage ? `/home?page=${prevPage}` : null;
     const nextLink = hasNextPage ? `/home?page=${nextPage}` : null;
 
+      // El cartId se almacena en req.session.cartId
+    const cartId = req.session.cartId;
+
     res.render('home', { 
       user: req.user, 
+      cartId, // Pasar el cartId a la vista
       products: payload, 
       totalPages, 
       prevPage, 

@@ -10,7 +10,7 @@ async function createUser(first_name, last_name, email, age, password, githubId 
     password,
     githubId,
     role: 'usuario',
-    cart: cartI
+    cart: cartId
   };
   return UserRepository.createUser(user);
 }
