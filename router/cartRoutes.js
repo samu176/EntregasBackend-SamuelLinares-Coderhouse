@@ -36,13 +36,13 @@ router.get('/', async (req, res) => {
 
 // Agregar un producto al carrito
 router.post('/product/:pid', async (req, res) => {
-  console.log(`Sesión actual: ${JSON.stringify(req.session)}`); // Agrega este log
+  console.log(`Sesión actual: ${JSON.stringify(req.session)}`);
   const productId = req.params.pid;
   const quantity = req.body.quantity || 1;
   console.log(`Agregando producto al carrito. Producto ID: ${productId}, Cantidad: ${quantity}`);
 
   const cartId = req.session.cartId;
-  console.log(`Cart ID obtenido de la sesión: ${cartId}`); // Agrega este log
+  console.log(`Cart ID obtenido de la sesión: ${cartId}`);
 
   if (!cartId) {
     console.log('No se encontró el ID del carrito en la sesión para agregar producto.');
@@ -134,12 +134,6 @@ router.put('/:cid/products/:pid', async (req, res) => {
     console.error('Error al actualizar cantidad del producto en el carrito:', error);
     res.status(500).send({ error: 'Error al actualizar cantidad del producto en el carrito' });
   }
-});
-
-// Ruta de prueba para simplificar el problema
-router.post('/test', (req, res) => {
-  console.log('Ruta de prueba recibida:', req.body);
-  res.status(200).json({ message: 'Ruta de prueba exitosa' });
 });
 
 module.exports = router;
