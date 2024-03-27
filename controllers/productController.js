@@ -11,8 +11,8 @@ async function addProduct(productData) {
 async function getProducts(options = {}) {
   try {
     const productsData = await ProductRepository.getProducts(options);
-    console.log('Products Data:', productsData); // Agrega esta línea
-    console.log('Payload in Products Data:', productsData.payload); // Agrega esta línea
+    console.log('Products Data:', productsData);
+    console.log('Payload in Products Data:', productsData.payload); 
     return productsData;
   } catch (error) {
     console.error('Error al obtener productos', error.message);

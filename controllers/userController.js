@@ -1,8 +1,17 @@
 const UserRepository = require('../repositories/userRepository');
 
-async function createUser(first_name, last_name, email, age, password, githubId) {
-  // Agrega un campo de rol y githubId
-  const user = { first_name, last_name, email, age, password, githubId, role: 'usuario' };
+async function createUser(first_name, last_name, email, age, password, githubId = null, cartId = null) {
+  // Agrega un campo de cart al objeto del usuario si se proporciona cartId
+  const user = {
+    first_name,
+    last_name,
+    email,
+    age,
+    password,
+    githubId,
+    role: 'usuario',
+    cart: cartI
+  };
   return UserRepository.createUser(user);
 }
 

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const authController = require('../controllers/authController');
-const sendMail = require('../config/mailer'); // Importar la función sendMail
+const sendMail = require('../config/mailer');
 
 // Ruta GET para el formulario de registro
 router.get('/register', (req, res) => {
@@ -16,11 +16,10 @@ router.post('/register', async (req, res, next) => {
     console.log('Usuario creado:', user);
     req.login(user, function(err) {
       if (err) {
-        console.error('Error al logear despues de registrarse:', err);
+        console.error('Error al logear después de registrarse:', err);
         return next(err);
       }
-      // Enviar correo electrónico de bienvenida
-      sendMail(email, 'Gracias por registrarte en nuestra página', 'Hola gracias por registrarte en nuestra página. ¡Que tengas un buen día!');
+      sendMail(email, 'Gracias por registrarte en nuestra página', 'Hola, gracias por registrarte en nuestra página. ¡Que tengas un buen día!');
       return res.redirect('/home'); // Redirigir a home después del registro
     });
   } catch (error) {
@@ -36,42 +35,39 @@ router.get('/login', (req, res) => {
 
 router.post('/login', passport.authenticate('local', {
   failureRedirect: '/login',
-}), (req, res, next) => {
-  // Si hay un error de autenticación, redirigir al cliente a la página de inicio de sesión con un mensaje de error
-  if (req.authInfo && req.authInfo.message) {
-    req.session.error = req.authInfo.message;
-    return res.redirect('/login');
-  }
-  // Si la autenticación funciono, redirigir al cliente a la página de inicio
+}), (req, res) => {
   res.redirect('/home');
 });
 
 // Rutas para autenticación de GitHub
-router.get('/auth/github',
-  passport.authenticate('github'));
-
-router.get('/auth/github/callback', 
-  passport.authenticate('github', { failureRedirect: '/login' }),
-  function(req, res) {
-    // la autenticación funciono, entonces redirigir a home
-    res.redirect('/home');
-  });
+router.get('/auth/github', passport.authenticate('github'));
+router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
+  res.redirect('/home');
+});
 
 // Ruta POST para logout
 router.post('/logout', (req, res) => {
-  req.logout(() => {});
-  res.redirect('/login');
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid');
+      res.redirect('/login');
+    });
+  });
 });
 
 // Ruta GET para el perfil del usuario
 router.get('/profile', (req, res) => {
+  // Asegúrate de que el usuario está correctamente almacenado en la sesión
+  if (!req.user) return res.redirect('/login');
+  
   // Crear un DTO del usuario con solo la información necesaria
   const userDto = {
-    id: req.session.user.id,
-    first_name: req.session.user.first_name,
-    last_name: req.session.user.last_name,
-    email: req.session.user.email,
-    age: req.session.user.age,
+    id: req.user.id,
+    first_name: req.user.first_name,
+    last_name: req.user.last_name,
+    email: req.user.email,
+    age: req.user.age,
   };
 
   res.render('profile', { user: userDto });
