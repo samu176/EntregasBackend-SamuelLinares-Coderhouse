@@ -38,7 +38,8 @@ router.get('/', async (req, res) => {
 router.post('/product/:pid', async (req, res) => {
   console.log(`Sesión actual: ${JSON.stringify(req.session)}`);
   const productId = req.params.pid;
-  const quantity = req.body.quantity || 1;
+  // Modificación aquí: asegurarse de que quantity se convierte a número
+  const quantity = Number(req.body.quantity) || 1; // Convertir quantity a número
   console.log(`Agregando producto al carrito. Producto ID: ${productId}, Cantidad: ${quantity}`);
 
   const cartId = req.user.cart;
