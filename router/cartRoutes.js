@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
 
 // Obtener el carrito del usuario en sesión
 router.get('/', async (req, res) => {
-  const cartId = req.session.cartId;
+  const cartId = req.user.cart;
   console.log(`Buscando carrito con ID de sesión: ${cartId}`);
   if (!cartId) {
     console.log('No se encontró el ID del carrito en la sesión.');
@@ -41,7 +41,7 @@ router.post('/product/:pid', async (req, res) => {
   const quantity = req.body.quantity || 1;
   console.log(`Agregando producto al carrito. Producto ID: ${productId}, Cantidad: ${quantity}`);
 
-  const cartId = req.session.cartId;
+  const cartId = req.user.cart;
   console.log(`Cart ID obtenido de la sesión: ${cartId}`);
 
   if (!cartId) {
