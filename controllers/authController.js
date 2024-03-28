@@ -22,13 +22,13 @@ async function register(req, first_name, last_name, email, age, password) {
 
   // Almacenar el ID del carrito en la sesión del usuario 
   console.log(`Almacenando el ID del carrito en la sesión del usuario con email: ${email}`);
-  req.session.cartId = newCart._id;
+  req.session.cart = newCart._id;
   console.log(`ID del carrito almacenado en la sesión: ${req.session.cartId}`);
 
   return user;
 }
 
-async function login(req, email, password) { // Asegúrate de pasar `req` como argumento
+async function login(req, email, password) {
   console.log(`Intentando iniciar sesión para el usuario con email: ${email}`);
   const user = await userController.findUser(email);
   if (user) {
@@ -38,7 +38,7 @@ async function login(req, email, password) { // Asegúrate de pasar `req` como a
       console.log(`Usuario con email: ${email} ha iniciado sesión con éxito.`);
       // Verificar que el usuario tenga un cartId antes de intentar reasignarlo
       if (user.cartId) {
-        req.session.cartId = user.cartId; // Reasignar el cartId del usuario a la sesión
+        req.session.cart = user.cart; // Reasignar el cartId del usuario a la sesión
         console.log(`Reasignando cartId a la sesión: ${req.session.cartId}`);
       } else {
         console.log(`El usuario con email: ${email} no tiene un cartId asociado.`);

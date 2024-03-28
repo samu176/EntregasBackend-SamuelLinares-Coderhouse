@@ -82,7 +82,7 @@ passport.deserializeUser(async (id, done) => {
         email: user.email,
         age: user.age,
         role: user.role,
-        cartId: user.cartId 
+        cart: user.cart 
       };
       done(null, userDto);
     } else {

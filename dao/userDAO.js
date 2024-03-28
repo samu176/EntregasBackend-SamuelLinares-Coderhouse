@@ -47,6 +47,7 @@ class UserDAO {
       age: user.age,
       role: user.role,
       password: user.password,
+      cart: user.cart // modelo de usuario tiene un campo para almacenar cartid
     };
   }
 }
