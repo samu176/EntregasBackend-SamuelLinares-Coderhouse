@@ -62,4 +62,26 @@ router.delete('/products/:pid', async (req, res) => {
   }
 });
 
+// Ruta para obtener la información del usuario actual
+router.get('/sessions/current', (req, res) => {
+  // Verifica si el usuario está autenticado
+  if (req.isAuthenticated()) {
+    // Retorna la información del usuario actual
+    res.json({
+      status: 'success',
+      user: {
+        id: req.user.id,
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        age: req.user.age,
+        role: req.user.role
+      }
+    });
+  } else {
+    // Devuelve un error si el usuario no está autenticado
+    res.status(401).json({ status: 'error', message: 'No autenticado' });
+  }
+});
+
 module.exports = router;
