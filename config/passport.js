@@ -47,7 +47,8 @@ passport.use(new GitHubStrategy({
       if (user) {
         return cb(null, user);
       } else {
-        userController.createUser(profile.username, 'sin apellido', profile.emails[0].value, 0, '1234', profile.id).then(user => {
+        // Asignar un email aleatorio si no está disponible en el perfil de github
+        userController.createUser(profile.username, 'sin apellido', profile.emails?.[0]?.value || `${profile.username}@github.com`, 0, '1234', profile.id).then(user => {
           return cb(null, user);
         });
       }
