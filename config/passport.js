@@ -4,6 +4,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const GitHubStrategy = require('passport-github').Strategy;
 const bcrypt = require('bcrypt');
 const userController = require('../controllers/userController');
+const cartController = require('../controllers/cartController');
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -41,20 +42,21 @@ passport.use(new GitHubStrategy({
     clientSecret: config.githubClientSecret,
     callbackURL: config.githubCallbackUrl
   },
-  function(accessToken, refreshToken, profile, cb) {
-    // Buscar o crear un usuario con githubId
-    userController.findUserByGithubId(profile.id).then(user => {
+  async function(accessToken, refreshToken, profile, cb) { 
+    try {
+      let user = await userController.findUserByGithubId(profile.id);
       if (user) {
         return cb(null, user);
       } else {
-        // Asignar un email aleatorio si no está disponible en el perfil de github
-        userController.createUser(profile.username, 'sin apellido', profile.emails?.[0]?.value || `${profile.username}@github.com`, 0, '1234', profile.id).then(user => {
-          return cb(null, user);
-        });
+        // Inventar un email si no está visible en el perfil de GitHub
+        const newCart = await cartController.createCart(); // Crear un nuevo carrito para el usuario de github
+        // Crear usuario y asociar el ID del carrito creado
+        user = await userController.createUser(profile.username, '.', profile.emails?.[0]?.value || `${profile.username}@github.com`, 0, '1234', profile.id, newCart._id);
+        return cb(null, user);
       }
-    }).catch(err => {
+    } catch (err) {
       return cb(err, null);
-    });
+    }
   }
 ));
 
