@@ -8,6 +8,7 @@ const { connectToMongoDB } = require('./db/mongoConnect');
 const config = require('./config/config'); 
 const ensureAuthenticated = require('./middleware/authMiddleware');
 const passport = require('./config/passport');
+const productController = require('./controllers/productController');
 const { homeRoutes, apiRoutes, cartRoutes, messageRoutes, authRoutes, realtimeRoutes } = require('./router');
 const errorHandler = require('./utils/errorHandler');
 const socketHandlers = require('./utils/socketHandlers');
@@ -15,6 +16,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 const PORT = 8080;
+
 
 // Configuración de Handlebars
 const exphbs = require('express-handlebars');
@@ -80,6 +82,9 @@ app.get('/chat', ensureAuthenticated, (req, res) => {
 
 // Manejo de mensajes de chat con Socket.IO
 socketHandlers(io);
+
+// Pasar el objeto 'io' a controlador de productos
+productController.setIo(io);
 
 // Iniciar el servidor
 server.listen(PORT, () => {

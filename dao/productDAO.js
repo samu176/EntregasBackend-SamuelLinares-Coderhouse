@@ -4,6 +4,7 @@ class ProductDAO {
   async getProductById(id) {
     try {
       const product = await Product.findById(id);
+      // Si el producto existe, lo convierte a DTO, de lo contrario devuelve null
       return product ? this.toDTO(product) : null;
     } catch (error) {
       throw new Error('GetProductByIdError');
@@ -14,6 +15,7 @@ class ProductDAO {
     try {
       const newProduct = new Product(product);
       const savedProduct = await newProduct.save();
+      // Convierte el producto guardado a DTO antes de devolverlo
       return this.toDTO(savedProduct);
     } catch (error) {
       throw new Error('CreateProductError');
@@ -23,6 +25,7 @@ class ProductDAO {
   async updateProduct(id, product) {
     try {
       const updatedProduct = await Product.findByIdAndUpdate(id, product, { new: true });
+      // Si el producto se actualizó correctamente, lo convierte a DTO, de lo contrario devuelve null
       return updatedProduct ? this.toDTO(updatedProduct) : null;
     } catch (error) {
       throw new Error('UpdateProductError');
@@ -32,6 +35,7 @@ class ProductDAO {
   async deleteProduct(id) {
     try {
       const deletedProduct = await Product.findByIdAndDelete(id);
+      // Si el producto se eliminó correctamente, lo convierte a DTO, de lo contrario devuelve null
       return deletedProduct ? this.toDTO(deletedProduct) : null;
     } catch (error) {
       throw new Error('DeleteProductError');
@@ -51,16 +55,27 @@ class ProductDAO {
           sort: sortOptions,
           lean: true, 
         });
+
+        // Verificar si los productos son 'undefined'
+        if (!result) {
+          throw new Error('No se pudieron obtener los productos');
+        }
+
         return {
           ...result,
           payload: result.docs.map(doc => this.toDTO(doc))
         };
       } else {
         const result = await Product.find(filter).sort(sortOptions).lean();
+
+        // Verificar si los productos son 'undefined'
+        if (!result) {
+          throw new Error('No se pudieron obtener los productos');
+        }
+
         return result.map(doc => this.toDTO(doc));
       }
     } catch (error) {
-      console.error('Error en getProducts:', error);
       throw new Error('GetProductsError');
     }
   }
@@ -69,12 +84,14 @@ class ProductDAO {
     try {
       const newProduct = new Product(productData);
       const savedProduct = await newProduct.save();
+      // Convierte el producto guardado a DTO antes de devolverlo
       return this.toDTO(savedProduct);
     } catch (error) {
       throw new Error('AddProductError');
     }
   }
 
+  // Convierte un producto a DTO (Data Transfer Object)
   toDTO(product) {
     return {
       id: product._id,

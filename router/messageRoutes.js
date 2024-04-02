@@ -8,7 +8,6 @@ router.get('/', async (req, res) => {
     const messages = await messageController.getMessages();
     res.json(messages);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Error al obtener los mensajes de la base de datos'});
   }
 });
@@ -20,7 +19,6 @@ router.post('/', async (req, res) => {
     const newMessage = await messageController.addMessage(name, message);
     res.json(newMessage);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Error al agregar un nuevo mensaje'});
   }
 });

@@ -76,49 +76,48 @@
   <script>
     const socket = io();
 
-    // Solicitar los productos actuales cuando se carga la página
+// Solicitar los productos actuales cuando se carga la página
 fetch('/api/products')
   .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response || !response.ok) {
+      throw new Error(`HTTP error! status: ${response ? response.status : 'response is undefined'}`);
     }
     return response.json();
   })
-  .then(data => {
-    if (data.status === 'success') {
-      console.log('Productos recibidos:', data.payload);
-      updateProductList(data.payload);
-    } else {
-      console.error('Error al obtener productos:', data.message);
-    }
+  .then(products => {
+    updateProductList(products.payload);
   })
   .catch(e => {
     console.error('Error al obtener productos:', e);
   });
 
-    socket.on('updateProducts', (products) => {
-      console.log('Actualización de productos recibida:', products);
-      updateProductList(products);
+// Escucha el evento 'updateProducts' y actualiza la lista de productos
+socket.on('updateProducts', (products) => {
+  updateProductList(products.payload);
+});
+
+ // Actualiza la lista de productos en la página
+function updateProductList(products) {
+  const productList = document.getElementById('productList');
+  productList.innerHTML = '';
+
+  if (Array.isArray(products)) {
+    products.forEach((product) => {
+      const productCard = document.createElement('div');
+      productCard.className = 'product-card';
+      productCard.innerHTML = `
+        <h3>${product.title || 'No Title'}</h3>
+        ${product.thumbnails ? `<img src="${product.thumbnails[0]}" alt="${product.title} image">` : ''}
+        ${product.description ? `<p>${product.description}</p>` : ''}
+        ${product.price ? `<p>Price: $${product.price}</p>` : ''}
+        ${product.stock ? `<p>Stock: ${product.stock}</p>` : ''}
+      `;
+      productList.appendChild(productCard);
     });
-
-    function updateProductList(products) {
-      console.log('Actualizando lista de productos con:', products);
-      const productList = document.getElementById('productList');
-      productList.innerHTML = '';
-
-      products.forEach((product) => {
-        const productCard = document.createElement('div');
-        productCard.className = 'product-card';
-        productCard.innerHTML = `
-          <h3>${product.title || 'No Title'}</h3>
-          ${product.thumbnails ? `<img src="${product.thumbnails[0]}" alt="${product.title} image">` : ''}
-          ${product.description ? `<p>${product.description}</p>` : ''}
-          ${product.price ? `<p>Price: $${product.price}</p>` : ''}
-          ${product.stock ? `<p>Stock: ${product.stock}</p>` : ''}
-        `;
-        productList.appendChild(productCard);
-      });
-    }
+  } else {
+    console.error('Error: products is not an array:', products);
+  }
+}
 
     // Evento de escucha para el formulario de productos
     document.getElementById('productForm').addEventListener('submit', function(event) {

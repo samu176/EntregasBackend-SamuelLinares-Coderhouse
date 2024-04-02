@@ -1,63 +1,66 @@
-const ProductRepository = require('../repositories/productRepository');
+const ProductService = require('../services/productService');
 
+let io; // Declarar 'io'
+
+// función para establecer 'io'
+function setIo(socketIo) {
+  io = socketIo;
+}
+
+// Función para agregar un producto
 async function addProduct(productData) {
   try {
-    return await ProductRepository.addProduct(productData);
+    const product = await ProductService.addProduct(productData);
+    io.emit('updateProducts', product);
+    return { status: 'success', payload: product };
   } catch (error) {
-    throw new Error('AddProductError: ' + error.message);
+    return { status: 'error', message: error.message };
   }
-};
+}
 
-async function getProducts(options = {}) {
+// Función para obtener los productos
+async function getProducts(req) {
   try {
-    const productsData = await ProductRepository.getProducts(options);
-    console.log('Products Data:', productsData);
-    console.log('Payload in Products Data:', productsData.payload); 
-    return productsData;
+    const options = req.query;
+    const products = await ProductService.getProducts(options);
+    return { status: 'success', payload: products };
   } catch (error) {
-    console.error('Error al obtener productos', error.message);
-    throw new Error('GetProductsError: ' + error.message);
+    throw new Error(error.message);
   }
-};
+}
 
-async function getProductById(productId) {
+// Función para obtener un producto por su ID
+async function getProductById(req, res) {
   try {
-    return await ProductRepository.getProductById(productId);
+    const productId = req.params.pid;
+    const product = await ProductService.getProductById(productId);
+    res.json({ status: 'success', payload: product });
   } catch (error) {
-    throw new Error('GetProductByIdError: ' + error.message);
+    res.status(500).json({ status: 'error', message: error.message });
   }
-};
+}
 
-async function updateProduct(productId, newData) {
+// Función para actualizar un producto
+async function updateProduct(req, res) {
   try {
-    return await ProductRepository.updateProduct(productId, newData);
+    const productId = req.params.pid;
+    const newData = req.body;
+    const product = await ProductService.updateProduct(productId, newData);
+    res.json({ status: 'success', payload: product });
   } catch (error) {
-    throw new Error('UpdateProductError: ' + error.message);
+    res.status(500).json({ status: 'error', message: error.message });
   }
-};
+}
 
-async function deleteProduct(productId) {
+// Función para eliminar un producto
+async function deleteProduct(req, res) {
   try {
-    return await ProductRepository.deleteProduct(productId);
+    const productId = req.params.pid;
+    await ProductService.deleteProduct(productId);
+    res.json({ status: 'success', message: 'Product deleted' });
   } catch (error) {
-    throw new Error('DeleteProductError: ' + error.message);
+    res.status(500).json({ status: 'error', message: error.message });
   }
-};
+}
 
-async function updateStock(productId, newStock) {
-  try {
-    const product = await getProductById(productId);
-    if (!product) {
-      throw new Error('Producto no encontrado');
-    }
-
-    product.stock = newStock;
-    await product.save();
-    return true;
-  } catch (error) {
-    console.error('Error actualizando el stock del producto', error.message);
-    throw new Error('UpdateStockError: ' + error.message);
-  }
-};
-
-module.exports = { addProduct, getProducts, getProductById, updateProduct, deleteProduct, updateStock };
+module.exports = { setIo, addProduct, getProducts, getProductById, updateProduct, deleteProduct };

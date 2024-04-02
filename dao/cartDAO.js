@@ -27,7 +27,8 @@ class CartDAO {
       } else {
         cart.products.push({ productId, quantity });
       }
-      return cart.save();
+      const updatedCart = await cart.save();
+      return updatedCart;
     } catch (error) {
       throw new Error('AddProductToCartError');
     }

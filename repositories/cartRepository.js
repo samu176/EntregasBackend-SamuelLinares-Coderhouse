@@ -16,6 +16,27 @@ class CartRepository {
   async deleteCart(id) {
     return await CartDAO.deleteCart(id);
   }
+
+  async addProductToCart(cartId, productId, quantity) {
+    return await CartDAO.addProductToCart(cartId, productId, quantity);
+  }
+
+  async removeProduct(cartId, productId) {
+    return await CartDAO.removeProduct(cartId, productId);
+  }
+
+  async purchaseCart(cartId) {
+    return await CartDAO.purchaseCart(cartId);
+  }
+
+  async clearCart(cartId) {
+    return await CartDAO.clearCart(cartId);
+  }
+
+  async updateProductQuantity(cartId, productId, quantity) {
+    return await CartDAO.updateProductQuantity(cartId, productId, quantity);
+  }
+
 }
 
-module.exports = new CartRepository();
+module.exports = CartRepository;

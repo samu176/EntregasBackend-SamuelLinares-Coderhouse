@@ -2,27 +2,33 @@ const ProductDAO = require('../dao/productDAO');
 
 class ProductRepository {
   async getProductById(id) {
-    return await ProductDAO.getProductById(id);
+    const product = await ProductDAO.getProductById(id);
+    return product;
   }
 
   async createProduct(product) {
-    return await ProductDAO.createProduct(product);
+    const createdProduct = await ProductDAO.createProduct(product);
+    return createdProduct;
   }
 
   async updateProduct(id, product) {
-    return await ProductDAO.updateProduct(id, product);
+    const updatedProduct = await ProductDAO.updateProduct(id, product);
+    return updatedProduct;
   }
 
   async deleteProduct(id) {
-    return await ProductDAO.deleteProduct(id);
+    const deletedProduct = await ProductDAO.deleteProduct(id);
+    return deletedProduct;
   }
 
   async getProducts(options = {}) {
-    return await ProductDAO.getProducts(options);
+    const products = await ProductDAO.getProducts(options);
+    return products;
   }
 
   async addProduct(productData) {
-    return await ProductDAO.addProduct(productData);
+    const addedProduct = await ProductDAO.addProduct(productData);
+    return addedProduct;
   }
 }
 

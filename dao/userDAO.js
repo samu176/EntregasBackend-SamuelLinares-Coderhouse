@@ -8,13 +8,19 @@ class UserDAO {
 
   async getUserByEmail(email) {
     const user = await User.findOne({ email: email });
-    return user ? this.toDTO(user) : null;
+    if (!user) {
+      return null; // Devuelve null si no se encuentra un usuario
+    }
+    console.log('Found user:', user);
+    return this.toDTO(user);
   }
 
   async createUser(user) {
     user.role = user.role || 'usuario';
     const newUser = new User(user);
+      
     const savedUser = await newUser.save();
+  
     return this.toDTO(savedUser);
   }
 

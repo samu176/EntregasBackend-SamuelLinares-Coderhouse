@@ -8,15 +8,19 @@ router.get('/', async (req, res) => {
   try {
     const { limit = 10, page = 1, sort, query } = req.query;
     const options = { limit: parseInt(limit), page: parseInt(page), sort, query };
-    const result = await productController.getProducts(options);
+    const result = await productController.getProducts(req);
+
+    if (!result) {
+      throw new Error('No se pudo obtener los productos');
+    }
 
     const { payload, totalPages, prevPage, nextPage, page: currentPage, hasPrevPage, hasNextPage } = result;
 
     const prevLink = hasPrevPage ? `/home?page=${prevPage}` : null;
     const nextLink = hasNextPage ? `/home?page=${nextPage}` : null;
 
-     // El cartId se obtiene de req.user.cart
-     const cartId = req.user.cart;
+    // El cartId se obtiene de req.user.cart
+    const cartId = req.user.cart;
 
     res.render('home', { 
       user: req.user, 
@@ -48,19 +52,11 @@ router.get('/products', async (req, res) => {
       page
     };
 
-    const productsData = await productController.getProducts(options);
-
-    console.log("Products Data:", productsData);
-    console.log("Payload in Products Data:", productsData.payload);
-
-    // Imprime el objeto user en la consola
-    console.log(req.user);
+    const productsData = await productController.getProducts(req);
 
     // Agrega los datos del usuario a los datos que se pasan a la vista
     res.render('home', { products: productsData.payload, user: req.user });
   } catch (error) {
-    // Manejo de errores
-    console.error("Error al obtener productos:", error);
     res.status(500).send("Error interno del servidor");
   }
 });
