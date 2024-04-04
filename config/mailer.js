@@ -4,14 +4,14 @@ const config = require('./config');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: config.SEND_MESSAGE_EMAIL,
-    pass: config.SEND_MESSAGE_EMAIL_PASSWORD
+    user: config.sendMessageEmail,
+    pass: config.sendMessageEmailPassword
   }
 });
 
 async function sendMail(to, subject, text) {
   const mailOptions = {
-    from: config.SEND_MESSAGE_EMAIL,
+    from: config.sendMessageEmail,
     to: to,
     subject: subject,
     text: text
@@ -19,9 +19,9 @@ async function sendMail(to, subject, text) {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${to}`);
+    console.log(`Email enviado a ${to}`);
   } catch (error) {
-    console.error(`Error sending email to ${to}: ${error}`);
+    console.error(`Error enviando email a ${to}: ${error}`);
   }
 }
 

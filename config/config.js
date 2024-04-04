@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 module.exports = {
   mongoUrl: process.env.MONGO_URL,
   adminEmail: process.env.ADMIN_EMAIL,
