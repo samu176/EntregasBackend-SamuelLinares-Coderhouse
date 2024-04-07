@@ -6,5 +6,8 @@ module.exports = {
   githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
   githubCallbackUrl: process.env.GITHUB_CALLBACK_URL,
   sendMessageEmail: process.env.SEND_MESSAGE_EMAIL,
-  sendMessageEmailPassword: process.env.SEND_MESSAGE_EMAIL_PASSWORD
+  sendMessageEmailPassword: process.env.SEND_MESSAGE_EMAIL_PASSWORD,
+  twilioAccountSid: process.env.TWILIO_ACCOUNT_SID,
+  twilioAuthToken: process.env.TWILIO_AUTH_TOKEN,
+  twilioPhoneNumber: process.env.TWILIO_PHONE_NUMBER
 };

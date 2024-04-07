@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const authController = require('../controllers/authController');
 const sendMail = require('../config/mailer');
+const sendSMS = require('../config/twilio');
 
 // Ruta GET para el formulario de registro
 router.get('/register', (req, res) => {
@@ -10,14 +11,15 @@ router.get('/register', (req, res) => {
 });
 
 router.post('/register', async (req, res, next) => {
-  const { first_name, last_name, email, age, password } = req.body;
+  const { first_name, last_name, email, age, password, phoneNumber } = req.body;
   try {
-    const user = await authController.register(req, first_name, last_name, email, age, password);
+    const user = await authController.register(req, first_name, last_name, email, age, password, phoneNumber);
     req.login(user, function(err) {
       if (err) {
         return next(err);
       }
       sendMail(email, 'Gracias por registrarte en nuestra página', 'Hola, gracias por registrarte en nuestra página. ¡Que tengas un buen día!');
+      sendSMS(phoneNumber, 'Gracias por registrarte en nuestra página. ¡Que tengas un buen día!');
       return res.redirect('/home'); // Redirigir a home después del registro
     });
   } catch (error) {

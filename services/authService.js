@@ -12,7 +12,7 @@ class AuthService {
   }
 
   // Método para registrar un usuario
-  async register(req, first_name, last_name, email, age, password, githubId) {
+  async register(req, first_name, last_name, email, age, password, phoneNumber, githubId) {
 
     // Comprueba si ya existe un usuario con este correo electrónico
     const existingUser = await this.userService.getUserByEmail(email);
@@ -29,6 +29,7 @@ class AuthService {
     first_name,
     last_name,
     email,
+    phoneNumber,
     age,
     password,
     cart: newCart._id
