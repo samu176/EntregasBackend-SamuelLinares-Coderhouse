@@ -1,6 +1,12 @@
-let products = [];
+const generateProducts = require('../../utils/mocking');
+
+let products = generateProducts();
 
 class ProductMemoryDAO {
+  async getProducts() {
+    return products;
+  }
+
   async createProduct(product) {
     products.push(product);
     return product;
