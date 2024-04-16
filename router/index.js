@@ -5,12 +5,13 @@ const cartRoutes = require('./cartRoutes');
 const messageRoutes = require('./messageRoutes');
 const authRoutes = require('./authRoutes');
 const realtimeRoutes = require('./realtimeRoutes');
+const ensureAuthenticated = require('../middleware/authMiddleware');
 
-module.exports = {
-  homeRoutes,
-  apiRoutes,
-  cartRoutes,
-  messageRoutes,
-  authRoutes,
-  realtimeRoutes
+module.exports = function(app) {
+  app.use('/home', ensureAuthenticated, homeRoutes);
+  app.use('/api', ensureAuthenticated, apiRoutes);
+  app.use('/cart', ensureAuthenticated, cartRoutes); 
+  app.use('/messages', messageRoutes);
+  app.use('/', authRoutes);
+  app.use('/realtime', realtimeRoutes);
 };

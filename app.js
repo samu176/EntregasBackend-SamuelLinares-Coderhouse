@@ -11,7 +11,7 @@ const config = require('./config/config');
 const ensureAuthenticated = require('./middleware/authMiddleware');
 const passport = require('./config/passport');
 const productController = require('./controllers/productController');
-const { homeRoutes, apiRoutes, cartRoutes, messageRoutes, authRoutes, realtimeRoutes } = require('./router');
+const setupRoutes = require('./router');
 const errorHandler = require('./utils/errorHandler');
 const socketHandlers = require('./utils/socketHandlers');
 const app = express();
@@ -70,12 +70,7 @@ app.use(passport.session());
 app.use(errorHandler); // Usar el middleware de manejo de errores
 
 // Uso de rutas para el home, la API, los carritos, los mensajes, la autenticación y los productos en tiempo real
-app.use('/home', ensureAuthenticated, homeRoutes);
-app.use('/api', ensureAuthenticated, apiRoutes);
-app.use('/cart', ensureAuthenticated, cartRoutes); 
-app.use('/messages', messageRoutes);
-app.use('/', authRoutes);
-app.use('/realtime', realtimeRoutes);
+setupRoutes(app);
 
 // Ruta para la vista de chat
 app.get('/chat', ensureAuthenticated, (req, res) => {
