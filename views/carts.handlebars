@@ -27,5 +27,8 @@
       {{/each}}
     </tbody>
   </table>
+  <form action="/cart/{{cart._id}}/purchase" method="post">
+    <button type="submit">Finalizar compra</button>
+  </form>
 </body>
 </html>

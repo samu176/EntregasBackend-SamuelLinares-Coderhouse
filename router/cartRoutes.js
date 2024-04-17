@@ -1,5 +1,7 @@
 const express = require('express');
 const cartController = require('../controllers/cartController');
+const productService = require('../services/productService');
+const Ticket = require('../models/ticketModel');
 const router = express.Router();
 
 // Crear un nuevo carrito
@@ -69,21 +71,6 @@ router.put('/:cid', async (req, res) => {
   }
 });
 
-// Finalizar compra del carrito
-router.post('/:cid/purchase', async (req, res) => {
-  const { cid } = req.params;
-  try {
-    const result = await cartController.purchaseCart(cid);
-    if (result.success) {
-      res.json(result.payload);
-    } else {
-      res.status(500).json({ error: 'Error finalizando la compra', details: result.payload });
-    }
-  } catch (error) {
-    res.status(500).json({ error: 'Error en el proceso de compra' });
-  }
-});
-
 // Eliminar un carrito
 router.delete('/:cid', async (req, res) => {
   const { cid } = req.params;
@@ -104,6 +91,17 @@ router.put('/:cid/products/:pid', async (req, res) => {
     res.send(result);
   } catch (error) {
     res.status(500).send({ error: 'Error al actualizar cantidad del producto en el carrito' });
+  }
+});
+
+// Finalizar la compra del carrito
+router.post('/:cid/purchase', async (req, res) => {
+  const cartId = req.params.cid;
+  try {
+    const ticket = await cartController.finalizePurchase(cartId, req.user.id);
+    res.json(ticket);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

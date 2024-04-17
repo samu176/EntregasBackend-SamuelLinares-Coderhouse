@@ -1,4 +1,6 @@
 const CartService = require('../services/cartService');
+const ProductService = require('../services/productService');
+const Ticket = require('../models/ticketModel');
 const productController = require('./productController');
 
 // Crear un nuevo carrito
@@ -71,34 +73,48 @@ const clearCart = async (cartId) => {
   }
 };
 
-// Proceso de compra del carrito
-const purchaseCart = async (cartId) => {
+// Finalizar la compra del carrito
+const finalizePurchase = async (cartId, userId) => {
   try {
     const cart = await CartService.getCartById(cartId);
     if (!cart) {
-      throw new Error('CartNotFoundError');
+      console.log(`No se encontró el carrito con el ID: ${cartId}`);
+      throw new Error('Carrito no encontrado');
     }
-
-    const notPurchasedProducts = [];
+    const ticketProducts = [];
+    let totalAmount = 0;
+    let remainingProducts = [];
     for (const product of cart.products) {
-      const productInfo = await productController.getProductById(product.productId);
-      if (productInfo.stock < product.quantity) {
-        notPurchasedProducts.push(product);
-      } else {
-        await productController.updateStock(product.productId, productInfo.stock - product.quantity);
+      const dbProduct = await ProductService.getProductById(product.productId);
+      if (!dbProduct) {
+        console.log(`No se encontró el producto con el ID: ${product.productId}`);
+        continue;
       }
+      if (dbProduct.stock < product.quantity) {
+        console.log(`No hay suficiente stock del producto con el ID: ${product.productId}`);
+        remainingProducts.push(product);
+        continue;
+      }
+      dbProduct.stock -= product.quantity;
+      await ProductService.updateProduct(dbProduct.id, dbProduct);
+      ticketProducts.push({
+        product: dbProduct.id,
+        quantity: product.quantity,
+      });
+      totalAmount += dbProduct.price * product.quantity;
     }
-
-    if (notPurchasedProducts.length > 0) {
-      await CartService.updateCart(cartId, notPurchasedProducts);
-      return { success: false, payload: notPurchasedProducts };
-    }
-
-    await CartService.clearCart(cartId);
-    return { success: true, payload: 'Compra finalizada con éxito' };
+    const ticket = new Ticket({
+      products: ticketProducts,
+      purchaser: userId,
+      amount: totalAmount,
+    });
+    await ticket.save();
+    await updateCart(cartId, remainingProducts);
+    return ticket;
   } catch (error) {
-    throw new Error('PurchaseCartError');
+    console.error(`Error al obtener el carrito: ${error}`);
+    throw new Error('Error finalizando la compra');
   }
 };
 
-module.exports = { createCart, getCartById, addProductToCart, removeProduct, updateCart, updateProductQuantity, clearCart, purchaseCart };
+module.exports = { createCart, getCartById, addProductToCart, removeProduct, updateCart, updateProductQuantity, clearCart, finalizePurchase };

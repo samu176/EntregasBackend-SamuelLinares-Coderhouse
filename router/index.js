@@ -10,7 +10,7 @@ const ensureAuthenticated = require('../middleware/authMiddleware');
 module.exports = function(app) {
   app.use('/home', ensureAuthenticated, homeRoutes);
   app.use('/api', ensureAuthenticated, apiRoutes);
-  app.use('/cart', ensureAuthenticated, cartRoutes); 
+  app.use('/cart', ensureAuthenticated, cartRoutes);
   app.use('/messages', messageRoutes);
   app.use('/', authRoutes);
   app.use('/realtime', realtimeRoutes);

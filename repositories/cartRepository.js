@@ -2,7 +2,9 @@ const CartDAO = require('../dao/cartDAO');
 
 class CartRepository {
   async getCartById(id) {
-    return await CartDAO.getCartById(id);
+    const cart = await CartDAO.getCartById(id);
+    console.log(`getCartById(${id}):`, JSON.stringify(cart, null, 2));
+    return cart;
   }
 
   async createCart(cart) {
