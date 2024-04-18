@@ -1,5 +1,6 @@
 const twilio = require('twilio');
 const config = require('./config');
+const logger = require('../utils/logger');
 
 const client = twilio(config.twilioAccountSid, config.twilioAuthToken);
 
@@ -10,9 +11,9 @@ async function sendSMS(to, body) {
       from: config.twilioPhoneNumber,
       to: to
     });
-    console.log(`SMS enviado a ${to}`);
+    logger.info(`SMS enviado a ${to}`);
   } catch (error) {
-    console.error(`Error enviando SMS a ${to}: ${error}`);
+    logger.error(`Error enviando SMS a ${to}: ${error}`);
   }
 }
 

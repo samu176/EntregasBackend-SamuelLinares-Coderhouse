@@ -14,6 +14,7 @@ const productController = require('./controllers/productController');
 const setupRoutes = require('./router');
 const errorHandler = require('./utils/errorHandler');
 const socketHandlers = require('./utils/socketHandlers');
+const logger = require('./utils/logger');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -35,7 +36,7 @@ app.set('view engine', 'handlebars');
 
 // Registro del helper de Handlebars
 Handlebars.registerHelper('log', function(something) {
-  console.log(something);
+  logger.debug(something);
 });
 
 // Configuración de archivos estáticos
@@ -59,7 +60,7 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-  console.log(`Sesión en middleware personalizado: ${JSON.stringify(req.session)}`);
+  logger.debug(`Sesión en middleware personalizado: ${JSON.stringify(req.session)}`);
   next();
 });
 
@@ -85,5 +86,5 @@ productController.setIo(io);
 
 // Iniciar el servidor
 server.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  logger.info(`Servidor escuchando en http://localhost:${PORT}`);
 });

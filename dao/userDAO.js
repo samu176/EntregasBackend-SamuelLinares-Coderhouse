@@ -11,7 +11,6 @@ class UserDAO {
     if (!user) {
       return null; // Devuelve null si no se encuentra un usuario
     }
-    console.log('Found user:', user);
     return this.toDTO(user);
   }
 

@@ -4,7 +4,6 @@ const ProductRepository = require('../repositories/productRepository');
 class ProductService {
   // Método para agregar un producto
   async addProduct(productData) {
-    console.log('ProductService.addProduct - productData:', productData); // Agregamos registro de consola
     try {
       // Llamar al método correspondiente del repositorio
       const product = await ProductRepository.addProduct(productData);

@@ -133,7 +133,6 @@ function updateProductList(products) {
         thumbnails: event.target.thumbnails.value.split(','),
       };
 
-      console.log('Enviando nuevo producto:', productData);
       socket.emit('newProduct', productData);
     });
   </script>

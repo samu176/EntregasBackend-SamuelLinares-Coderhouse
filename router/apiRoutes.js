@@ -1,6 +1,7 @@
 const express = require('express');
 const productController = require('../controllers/productController');
 const generateProducts = require('../utils/mocking');
+const logger = require('../utils/logger');
 const router = express.Router();
 
 // Ruta GET para /api/products
@@ -10,6 +11,16 @@ router.get('/products', productController.getProducts);
 router.get('/mockingproducts', (req, res) => {
   const products = generateProducts();
   res.json(products);
+});
+
+// Ruta GET para probar los logs
+router.get('/loggerTest', (req, res) => {
+  logger.error('Esto es un error de prueba');
+  logger.warn('Esto es una advertencia de prueba');
+  logger.info('Esto es una información de prueba');
+  logger.http('Esto es un log HTTP de prueba');
+  logger.debug('Esto es un log de depuración de prueba');
+  res.send('Logs de prueba enviados.');
 });
 
 // Ruta para obtener detalles de un producto por su id

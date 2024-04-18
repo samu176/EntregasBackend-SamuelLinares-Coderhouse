@@ -3,6 +3,7 @@ const ProductService = require('../services/productService');
 const Ticket = require('../models/ticketModel');
 const productController = require('./productController');
 const User = require('../models/userModel');
+const logger = require('../utils/logger');
 
 // Crear un nuevo carrito
 const createCart = async () => {
@@ -79,7 +80,7 @@ const finalizePurchase = async (cartId, userId) => {
   try {
     const cart = await CartService.getCartById(cartId);
     if (!cart) {
-      console.log(`No se encontró el carrito con el ID: ${cartId}`);
+      logger.warn(`No se encontró el carrito con el ID: ${cartId}`);
       throw new Error('Carrito no encontrado');
     }
     const ticketProducts = [];
@@ -88,11 +89,11 @@ const finalizePurchase = async (cartId, userId) => {
     for (const product of cart.products) {
       const dbProduct = await ProductService.getProductById(product.productId);
       if (!dbProduct) {
-        console.log(`No se encontró el producto con el ID: ${product.productId}`);
+        logger.warn(`No se encontró el producto con el ID: ${product.productId}`);
         continue;
       }
       if (dbProduct.stock < product.quantity) {
-        console.log(`No hay suficiente stock del producto con el ID: ${product.productId}`);
+        logger.warn(`No hay suficiente stock del producto con el ID: ${product.productId}`);
         remainingProducts.push(product);
         continue;
       }
