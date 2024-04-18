@@ -20,6 +20,7 @@ const ticketSchema = new mongoose.Schema({
   purchaser: {
     type: String,
     required: true,
+    match: /.+\@.+\..+/, // Asegura que el campo es un correo electrónico
   },
 });
 

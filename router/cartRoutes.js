@@ -98,8 +98,19 @@ router.put('/:cid/products/:pid', async (req, res) => {
 router.post('/:cid/purchase', async (req, res) => {
   const cartId = req.params.cid;
   try {
-    const ticket = await cartController.finalizePurchase(cartId, req.user.id);
-    res.json(ticket);
+    const ticketId = await cartController.finalizePurchase(cartId, req.user.id);
+    res.redirect(`/cart/${cartId}/ticket/${ticketId}`);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Ruta para ver el ticket de compra
+router.get('/:cid/ticket/:tid', async (req, res) => {
+  const ticketId = req.params.tid;
+  try {
+    const ticket = await Ticket.findById(ticketId);
+    res.render('ticket', { ticket });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

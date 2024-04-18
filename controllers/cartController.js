@@ -2,6 +2,7 @@ const CartService = require('../services/cartService');
 const ProductService = require('../services/productService');
 const Ticket = require('../models/ticketModel');
 const productController = require('./productController');
+const User = require('../models/userModel');
 
 // Crear un nuevo carrito
 const createCart = async () => {
@@ -103,14 +104,18 @@ const finalizePurchase = async (cartId, userId) => {
       });
       totalAmount += dbProduct.price * product.quantity;
     }
+     // Obtiene el usuario de la base de datos
+     const user = await User.findById(userId);
+     if (!user) {
+       throw new Error('Usuario no encontrado');
+     }
     const ticket = new Ticket({
-      products: ticketProducts,
-      purchaser: userId,
+      purchaser: user.email,
       amount: totalAmount,
     });
     await ticket.save();
     await updateCart(cartId, remainingProducts);
-    return ticket;
+    return ticket._id; // Devuelve el ID del ticket
   } catch (error) {
     console.error(`Error al obtener el carrito: ${error}`);
     throw new Error('Error finalizando la compra');
