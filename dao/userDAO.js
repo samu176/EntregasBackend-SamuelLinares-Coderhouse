@@ -24,8 +24,17 @@ class UserDAO {
   }
 
   async updateUser(id, user) {
-    const updatedUser = await User.findByIdAndUpdate(id, user, { new: true });
-    return updatedUser ? this.toDTO(updatedUser) : null;
+    try {
+      const updatedUser = await User.findByIdAndUpdate(id, user, { new: true });
+      return updatedUser ? this.toDTO(updatedUser) : null;
+    } catch (error) {
+      throw new Error('Error al actualizar el usuario');
+    }
+  }
+  // Encontrar usuario por token de restablecimiento
+  async findUserByResetToken(resetToken) {
+    const user = await User.findOne({ resetPasswordToken: resetToken, resetPasswordExpires: { $gt: Date.now() } });
+    return user ? this.toDTO(user) : null;
   }
 
   async deleteUser(id) {
@@ -52,7 +61,9 @@ class UserDAO {
       age: user.age,
       role: user.role,
       password: user.password,
-      cart: user.cart // modelo de usuario tiene un campo para almacenar cartid
+      cart: user.cart, // modelo de usuario tiene un campo para almacenar cartid
+      resetPasswordToken: user.resetPasswordToken,
+      resetPasswordExpires: user.resetPasswordExpires
     };
   }
 }

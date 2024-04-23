@@ -18,7 +18,12 @@ router.post('/register', async (req, res, next) => {
       if (err) {
         return next(err);
       }
-      sendMail(email, 'Gracias por registrarte en nuestra página', 'Hola, gracias por registrarte en nuestra página. ¡Que tengas un buen día!');
+      const mailOptions = {
+        to: email,
+        subject: 'Gracias por registrarte en nuestra página',
+        text: 'Hola, gracias por registrarte en nuestra página. ¡Que tengas un buen día!'
+      };
+      sendMail(mailOptions);
       sendSMS(phoneNumber, 'Gracias por registrarte en nuestra página. ¡Que tengas un buen día!');
       return res.redirect('/home'); // Redirigir a home después del registro
     });
@@ -74,5 +79,34 @@ router.get('/profile', (req, res) => {
 
   res.render('profile', { user: userDto });
 });
+
+  // Rutas para recuperar y restablecer la contraseña
+  router.get('/forgot-password', (req, res) => {
+    res.render('forgotPassword');
+  });
+  
+  router.post('/forgot-password', async (req, res) => {
+    console.log('POST /forgot-password');
+    const { email } = req.body;
+    try {
+      await authController.forgotPassword(req, email);
+      res.redirect('/login');
+    } catch (error) {
+      res.redirect('/forgot-password');
+    }
+  });
+  
+  router.get('/reset-password', (req, res) => {
+    const { token } = req.query;
+    res.render('resetPassword', { token });
+  });
+  
+  router.post('/reset-password', async (req, res) => {
+    try {
+      await authController.resetPassword(req, res);
+    } catch (error) {
+      res.redirect('/reset-password');
+    }
+  });
 
 module.exports = router;

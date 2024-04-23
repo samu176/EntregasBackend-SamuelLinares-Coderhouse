@@ -34,7 +34,9 @@ const UserSchema = new mongoose.Schema({
   cart: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Cart'
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
 });
 
 module.exports = mongoose.model('User', UserSchema);

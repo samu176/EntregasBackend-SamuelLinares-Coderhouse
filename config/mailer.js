@@ -10,19 +10,14 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-async function sendMail(to, subject, text) {
-  const mailOptions = {
-    from: config.sendMessageEmail,
-    to: to,
-    subject: subject,
-    text: text
-  };
+async function sendMail(mailOptions) {
+  mailOptions.from = config.sendMessageEmail;
 
   try {
     await transporter.sendMail(mailOptions);
-    logger.info(`Email enviado a ${to}`);
+    logger.info(`Email enviado a ${mailOptions.to}`);
   } catch (error) {
-    logger.error(`Error enviando email a ${to}: ${error}`);
+    logger.error(`Error enviando email a ${mailOptions.to}: ${error}`);
   }
 }
 

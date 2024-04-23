@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 class UserService {
   constructor() {
-    this.userRepository = new UserRepository();
+    this.userRepository = UserRepository;
   }
 
   // Método para registrar un usuario
@@ -31,13 +31,13 @@ class UserService {
     // Usar el método getUserByEmail de UserRepository para obtener el usuario
     const user = await this.userRepository.getUserByEmail(email);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('Usuario no encontrado');
     }
 
     // Verificar si la contraseña es válida
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      throw new Error('Contraseña incorrecta');
     }
 
     // Si todo está bien, devolver el usuario
@@ -50,7 +50,7 @@ class UserService {
     // Usar el método getUserById de UserRepository para obtener el usuario
     const user = await this.userRepository.getUserById(id);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('Usuario no encontrado');
     }
 
     // Si todo está bien, devolver el usuario
