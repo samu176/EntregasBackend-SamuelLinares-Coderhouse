@@ -64,11 +64,11 @@ async function login(req, email, password) {
     const { token, password } = req.body;
   
     try {
-      // Buscar al usuario con el token
-      const user = await UserDAO.findUserByResetToken(token);
-      if (!user) {
-        return res.status(400).send('El token se ha vencido, intenta recuperar la contraseña de nuevo.');
-      }
+     // Buscar al usuario con el token
+    const user = await UserDAO.findUserByResetToken(token);
+    if (!user || Date.now() > user.resetPasswordExpires) {
+      return res.render('forgotPassword', { error: 'Tu link de restablecimiento expiró, necesitas generar uno nuevo.' });
+    }
   
     // Comprobar si la nueva contraseña es igual a la que tenia
     const isSamePassword = await bcrypt.compare(password, user.password);
