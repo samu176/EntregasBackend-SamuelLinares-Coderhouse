@@ -64,6 +64,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Middleware para agregar logger al objeto req
+app.use((req, res, next) => {
+  req.logger = logger;
+  next();
+});
+
 // Inicializar Passport y la sesión de Passport
 app.use(passport.initialize());
 app.use(passport.session());

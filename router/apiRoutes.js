@@ -15,13 +15,13 @@ router.get('/mockingproducts', (req, res) => {
   res.json(products);
 });
 
-// Ruta GET para probar los logs
+// Ruta GET para probar logger
 router.get('/loggerTest', (req, res) => {
-  logger.error('Esto es un error de prueba');
-  logger.warn('Esto es una advertencia de prueba');
-  logger.info('Esto es una información de prueba');
-  logger.http('Esto es un log HTTP de prueba');
-  logger.debug('Esto es un log de depuración de prueba');
+  req.logger.error('Esto es un error de prueba');
+  req.logger.warn('Esto es una advertencia de prueba');
+  req.logger.info('Esto es una información de prueba');
+  req.logger.http('Esto es un log HTTP de prueba');
+  req.logger.debug('Esto es un log de depuración de prueba');
   res.send('Logs de prueba enviados.');
 });
 
