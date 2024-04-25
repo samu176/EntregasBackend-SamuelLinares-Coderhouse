@@ -58,4 +58,12 @@ router.get('/sessions/current', (req, res) => {
   }
 });
 
+// Ruta para cambiar el rol de un usuario
+router.put('/users/premium/:uid', ensureAuthenticated, (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ status: 'error', message: 'Permiso rechazado' });
+  }
+  next();
+}, userController.changeUserRole);
+
 module.exports = router;

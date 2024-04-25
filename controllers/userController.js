@@ -27,6 +27,18 @@ async function findUserByGithubId(githubId) {
   return UserRepository.findUserByGithubId(githubId);
 }
 
+// Función para cambiar el rol de un usuario
+async function changeUserRole(req, res) {
+  try {
+    const userId = req.params.uid;
+    const newRole = req.body.role;
+    const user = await UserService.changeUserRole(userId, newRole);
+    res.json({ status: 'success', payload: user });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+}
+
 module.exports = {
   createUser,
   findUser,

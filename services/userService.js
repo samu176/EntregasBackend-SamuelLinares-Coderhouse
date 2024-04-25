@@ -83,6 +83,20 @@ async findUserByGithubId(githubId) {
   return user;
 }
 
+// Método para cambiar el rol de un usuario
+async changeUserRole(userId, newRole) {
+  try {
+    const user = await this.userRepository.getUserById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    user.role = newRole;
+    await user.save();
+    return user;
+  } catch (error) {
+    throw new Error('ChangeUserRoleError: ' + error.message);
+  }
+}
 
 }
 
