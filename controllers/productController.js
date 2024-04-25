@@ -45,7 +45,7 @@ async function updateProduct(req, res) {
   try {
     const productId = req.params.pid;
     const newData = req.body;
-    const product = await ProductService.updateProduct(productId, newData);
+    const product = await ProductService.updateProduct(productId, newData, req.user.id, req.user.role);
     res.json({ status: 'success', payload: product });
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });
@@ -56,7 +56,7 @@ async function updateProduct(req, res) {
 async function deleteProduct(req, res) {
   try {
     const productId = req.params.pid;
-    await ProductService.deleteProduct(productId);
+    await ProductService.deleteProduct(productId, req.user.id, req.user.role);
     res.json({ status: 'success', message: 'Product deleted' });
   } catch (error) {
     res.status(500).json({ status: 'error', message: error.message });

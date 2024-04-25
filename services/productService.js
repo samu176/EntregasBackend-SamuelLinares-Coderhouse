@@ -36,22 +36,33 @@ class ProductService {
   }
 
   // Método para actualizar un producto
-  async updateProduct(productId, newData) {
+  async updateProduct(productId, newData, userId, userRole) {
     try {
-      // Llamar al método correspondiente del repositorio
-      const product = await ProductRepository.updateProduct(productId, newData);
-      return product;
+      const product = await this.getProductById(productId);
+      if (!product) {
+        throw new Error('Product not found');
+      }
+      if (product.owner !== userId && userRole !== 'admin') {
+        throw new Error('Permission denied');
+      }
+      const updatedProduct = await ProductRepository.updateProduct(productId, newData);
+      return updatedProduct;
     } catch (error) {
       throw new Error('UpdateProductError: ' + error.message);
     }
   }
 
   // Método para eliminar un producto
-  async deleteProduct(productId) {
+  async deleteProduct(productId, userId, userRole) {
     try {
-      // Llamar al método correspondiente del repositorio
-      const product = await ProductRepository.deleteProduct(productId);
-      return product;
+      const product = await this.getProductById(productId);
+      if (!product) {
+        throw new Error('Product not found');
+      }
+      if (product.owner !== userId && userRole !== 'admin') {
+        throw new Error('Permission denied');
+      }
+      await ProductRepository.deleteProduct(productId);
     } catch (error) {
       throw new Error('DeleteProductError: ' + error.message);
     }

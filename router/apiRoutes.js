@@ -2,6 +2,7 @@ const express = require('express');
 const productController = require('../controllers/productController');
 const generateProducts = require('../utils/mocking');
 const logger = require('../utils/logger');
+const ensureAuthenticated = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 // Ruta GET para /api/products
@@ -27,13 +28,13 @@ router.get('/loggerTest', (req, res) => {
 router.get('/products/:pid', productController.getProductById);
 
 // Ruta para agregar un nuevo producto
-router.post('/products', productController.addProduct);
+router.post('/products', ensureAuthenticated, productController.addProduct);
 
 // Ruta para actualizar un producto por su id
-router.put('/products/:pid', productController.updateProduct);
+router.put('/products/:pid', ensureAuthenticated, productController.updateProduct);
 
 // Ruta para eliminar un producto por su id
-router.delete('/products/:pid', productController.deleteProduct);
+router.delete('/products/:pid', ensureAuthenticated, productController.deleteProduct);
 
 // Ruta para obtener la información del usuario actual
 router.get('/sessions/current', (req, res) => {
