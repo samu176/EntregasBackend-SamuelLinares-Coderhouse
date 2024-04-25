@@ -5,7 +5,7 @@ const ensureAuthenticated = require('../middleware/authMiddleware');
 
 router.get('/realtimeProducts', ensureAuthenticated, async (req, res) => {
   try {
-    if (req.user && req.user.role === 'admin') {
+    if (req.user && ['admin', 'premium'].includes(req.user.role)) { // Permitir el acceso a los usuarios con rol 'admin' y 'premium'
       const result = await productController.getProducts(req);
       res.render('realtimeProducts', { 
         user: req.user, 

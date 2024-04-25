@@ -29,6 +29,7 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
+    enum: ['usuario', 'admin', 'premium'], // Agregado 'premium' como una opción válida
     required: true,
   },
   cart: {
