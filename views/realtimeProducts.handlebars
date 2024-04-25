@@ -46,6 +46,7 @@
     <input type="text" id="category" name="category"><br>
     <label for="thumbnails">Thumbnails:</label><br>
     <input type="text" id="thumbnails" name="thumbnails"><br>
+    <input type="hidden" id="owner" name="owner" value="{{user.email}}">
     <input type="submit" value="Agregar producto">
   </form>
   <div id="productList">
@@ -111,6 +112,7 @@ function updateProductList(products) {
         ${product.description ? `<p>${product.description}</p>` : ''}
         ${product.price ? `<p>Price: $${product.price}</p>` : ''}
         ${product.stock ? `<p>Stock: ${product.stock}</p>` : ''}
+        ${product.owner ? `<p>Owner: ${product.owner}</p>` : ''}
       `;
       productList.appendChild(productCard);
     });
@@ -130,6 +132,7 @@ function updateProductList(products) {
         price: event.target.price.value,
         stock: event.target.stock.value,
         category: event.target.category.value,
+        owner: event.target.owner.value,
         thumbnails: event.target.thumbnails.value.split(','),
       };
 

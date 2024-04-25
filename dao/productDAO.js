@@ -102,6 +102,7 @@ class ProductDAO {
       code: product.code,
       stock: product.stock,
       category: product.category,
+      owner: product.owner,
     };
   }
 }
