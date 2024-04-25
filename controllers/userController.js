@@ -1,4 +1,5 @@
 const UserRepository = require('../repositories/userRepository');
+const UserService = require('../services/userService');
 
 async function createUser(first_name, last_name, email, age, password, githubId = null, cartId = null) {
   // Agrega un campo de cart al objeto del usuario si se proporciona cartId
@@ -44,4 +45,5 @@ module.exports = {
   findUser,
   findUserById,
   findUserByGithubId,
+  changeUserRole,
 };

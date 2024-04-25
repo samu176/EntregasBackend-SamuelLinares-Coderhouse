@@ -1,8 +1,9 @@
 const express = require('express');
 const productController = require('../controllers/productController');
+const userController = require('../controllers/userController');
 const generateProducts = require('../utils/mocking');
 const logger = require('../utils/logger');
-const ensureAuthenticated = require('../middlewares/authMiddleware');
+const ensureAuthenticated = require('../middleware/authMiddleware');
 const router = express.Router();
 
 // Ruta GET para /api/products
