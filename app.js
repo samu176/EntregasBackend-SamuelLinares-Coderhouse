@@ -60,7 +60,7 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-  logger.debug(`Sesión en middleware personalizado: ${JSON.stringify(req.session)}`);
+  logger.debug(`Información de la sesión: ${JSON.stringify(req.session)}`);
   next();
 });
 
