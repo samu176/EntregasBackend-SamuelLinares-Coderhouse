@@ -15,6 +15,8 @@ const setupRoutes = require('./router');
 const errorHandler = require('./utils/errorHandler');
 const socketHandlers = require('./utils/socketHandlers');
 const logger = require('./utils/logger');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -63,6 +65,33 @@ app.use((req, res, next) => {
   logger.debug(`Información de la sesión: ${JSON.stringify(req.session)}`);
   next();
 });
+
+
+// Configuración de Swagger
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Ecommerce API',
+      version: '1.0.0',
+      description: 'APIs for Ecommerce Application',
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+  },
+  apis: ['./docs/*.yaml'],
+};
+
+const specs = swaggerJsdoc(options);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // Middleware para agregar logger al objeto req
 app.use((req, res, next) => {

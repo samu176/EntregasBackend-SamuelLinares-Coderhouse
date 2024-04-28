@@ -1,0 +1,156 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Ecommerce API
+  description: APIs para la aplicación de ecommerce
+paths:
+  /cart:
+    post:
+      summary: Crear un nuevo carrito
+      responses:
+        200:
+          description: El carrito creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    get:
+      summary: Obtener el carrito del usuario
+      responses:
+        200:
+          description: El carrito del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+  /cart/{cid}:
+    put:
+      summary: Actualizar un carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: El carrito actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    delete:
+      summary: Eliminar un carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Carrito eliminado
+  /cart/product/{pid}:
+    post:
+      summary: Agregar un producto al carrito
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: El carrito actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+  /cart/{cid}/products/{pid}:
+    delete:
+      summary: Eliminar un producto del carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: El carrito actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    put:
+      summary: Actualizar la cantidad de un producto en el carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: El carrito actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+  /cart/{cid}/purchase:
+    post:
+      summary: Finalizar la compra del carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: El ticket de compra
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Cart:
+      type: object
+      required:
+        - products
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                type: string
+              quantity:
+                type: number
+    Ticket:
+      type: object
+      required:
+        - purchaser
+        - amount
+      properties:
+        purchaser:
+          type: string
+        amount:
+          type: number
