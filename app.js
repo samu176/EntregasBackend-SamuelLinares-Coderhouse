@@ -103,10 +103,10 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(errorHandler); // Usar el middleware de manejo de errores
-
 // Uso de rutas para el home, la API, los carritos, los mensajes, la autenticación y los productos en tiempo real
 setupRoutes(app);
+
+app.use(errorHandler); // Usar el middleware de manejo de errores
 
 // Ruta para la vista de chat
 app.get('/chat', ensureAuthenticated, (req, res) => {
