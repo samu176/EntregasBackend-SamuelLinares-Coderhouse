@@ -11,6 +11,8 @@ router.get('/register', (req, res) => {
 });
 
 router.post('/register', async (req, res, next) => {
+  console.log('Registro recibido:', req.body); // Agregar console.log aquí
+
   const { first_name, last_name, email, age, password, phoneNumber } = req.body;
   try {
     const user = await authController.register(req, first_name, last_name, email, age, password, phoneNumber);
@@ -25,6 +27,7 @@ router.post('/register', async (req, res, next) => {
       };
       sendMail(mailOptions);
       sendSMS(phoneNumber, 'Gracias por registrarte en nuestra página. ¡Que tengas un buen día!');
+      console.log('Usuario registrado:', user);
       return res.redirect('/home'); // Redirigir a home después del registro
     });
   } catch (error) {
@@ -40,6 +43,7 @@ router.get('/login', (req, res) => {
 router.post('/login', passport.authenticate('local', {
   failureRedirect: '/login',
 }), (req, res) => {
+  console.log('Inicio de sesión recibido:', req.body);
   res.redirect('/home');
 });
 
@@ -51,6 +55,7 @@ router.get('/auth/github/callback', passport.authenticate('github', { failureRed
 
 // Ruta POST para logout
 router.post('/logout', (req, res) => {
+  console.log('Logout recibido:', req.body);
   req.logout(function(err) {
     if (err) { 
       return next(err); 
@@ -80,33 +85,34 @@ router.get('/profile', (req, res) => {
   res.render('profile', { user: userDto });
 });
 
-  // Rutas para recuperar y restablecer la contraseña
-  router.get('/forgot-password', (req, res) => {
-    res.render('forgotPassword');
-  });
-  
-  router.post('/forgot-password', async (req, res) => {
-    console.log('POST /forgot-password');
-    const { email } = req.body;
-    try {
-      await authController.forgotPassword(req, email);
-      res.redirect('/login');
-    } catch (error) {
-      res.redirect('/forgot-password');
-    }
-  });
-  
-  router.get('/reset-password', (req, res) => {
-    const { token } = req.query;
-    res.render('resetPassword', { token });
-  });
-  
-  router.post('/reset-password', async (req, res) => {
-    try {
-      await authController.resetPassword(req, res);
-    } catch (error) {
-      res.redirect('/reset-password');
-    }
-  });
+// Rutas para recuperar y restablecer la contraseña
+router.get('/forgot-password', (req, res) => {
+  res.render('forgotPassword');
+});
+
+router.post('/forgot-password', async (req, res) => {
+  console.log('Recuperar contraseña recibido:', req.body);
+  const { email } = req.body;
+  try {
+    await authController.forgotPassword(req, email);
+    res.redirect('/login');
+  } catch (error) {
+    res.redirect('/forgot-password');
+  }
+});
+
+router.get('/reset-password', (req, res) => {
+  const { token } = req.query;
+  res.render('resetPassword', { token });
+});
+
+router.post('/reset-password', async (req, res) => {
+  console.log('Restablecer contraseña recibido:', req.body);
+  try {
+    await authController.resetPassword(req, res);
+  } catch (error) {
+    res.redirect('/reset-password');
+  }
+});
 
 module.exports = router;
